@@ -1,0 +1,258 @@
+:root {
+    --bg: #f3f5f7;
+    --surface: #ffffff;
+    --text: #15202b;
+    --muted: #66717c;
+    --border: #e1e6eb;
+    --accent: #1677ff;
+    --success: #20a36a;
+    --danger: #d64545;
+    --shadow: 0 8px 30px rgba(30, 50, 70, 0.07);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+.container {
+    width: min(1180px, calc(100% - 32px));
+    margin: 32px auto 48px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.eyebrow,
+.label {
+    color: var(--muted);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+h1,
+h2,
+p {
+    margin: 0;
+}
+
+h1 {
+    margin-top: 6px;
+    font-size: clamp(1.8rem, 4vw, 2.7rem);
+}
+
+h2 {
+    margin-top: 4px;
+    font-size: 1.25rem;
+}
+
+.status-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    box-shadow: var(--shadow);
+    white-space: nowrap;
+}
+
+.dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.dot.online {
+    background: var(--success);
+}
+
+.dot.offline {
+    background: var(--danger);
+}
+
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+}
+
+.sensor-grid,
+.control-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(4, 1fr);
+    margin-bottom: 16px;
+}
+
+.control-grid {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.metric {
+    padding: 20px;
+    min-height: 132px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.metric strong {
+    margin-top: 6px;
+    font-size: 2.1rem;
+    line-height: 1;
+}
+
+.actuator,
+.chart-card,
+.settings {
+    padding: 22px;
+}
+
+.card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.mode {
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.button-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.mode-btn,
+.primary-btn {
+    border: 1px solid var(--border);
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+}
+
+.mode-btn:hover,
+.primary-btn:hover {
+    border-color: var(--accent);
+}
+
+.primary-btn {
+    margin-top: 16px;
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+.chart-card {
+    margin-bottom: 16px;
+}
+
+.chart-wrap {
+    position: relative;
+    width: 100%;
+    height: 360px;
+    margin-top: 18px;
+}
+
+#historyChart {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.settings {
+    margin-bottom: 16px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-top: 18px;
+}
+
+label {
+    display: grid;
+    gap: 7px;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    color: var(--text);
+}
+
+.message {
+    margin-left: 10px;
+    color: var(--success);
+}
+
+@media (max-width: 900px) {
+    .sensor-grid,
+    .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .control-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 620px) {
+    .container {
+        width: min(100% - 20px, 1180px);
+        margin-top: 18px;
+    }
+
+    .header {
+        flex-direction: column;
+    }
+
+    .sensor-grid,
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .button-row {
+        flex-wrap: wrap;
+    }
+
+    .chart-wrap {
+        height: 300px;
+    }
+}

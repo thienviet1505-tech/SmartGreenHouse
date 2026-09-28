@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Greenhouse</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <div>
+            <p class="eyebrow">REMOTE MONITORING & CONTROL</p>
+            <h1>Smart Greenhouse</h1>
+        </div>
+        <div class="status-wrap">
+            <span id="gatewayDot" class="dot offline"></span>
+            <span id="gatewayStatus">Gateway Offline</span>
+        </div>
+    </header>
+
+    <main>
+        <section class="sensor-grid">
+            <article class="card metric">
+                <span class="label">Temperature</span>
+                <strong id="temperature">--</strong>
+                <span>°C</span>
+            </article>
+
+            <article class="card metric">
+                <span class="label">Humidity</span>
+                <strong id="humidity">--</strong>
+                <span>%RH</span>
+            </article>
+
+            <article class="card metric">
+                <span class="label">Light</span>
+                <strong id="light">--</strong>
+                <span>Lux</span>
+            </article>
+
+            <article class="card metric">
+                <span class="label">RS485</span>
+                <strong id="rs485Status">--</strong>
+                <span>Link</span>
+            </article>
+        </section>
+
+        <section class="control-grid">
+            <article class="card actuator">
+                <div class="card-head">
+                    <div>
+                        <span class="label">Fan</span>
+                        <h2 id="fanState">OFF</h2>
+                    </div>
+                    <span id="fanMode" class="mode">AUTO</span>
+                </div>
+                <div class="button-row">
+                    <button class="mode-btn" data-device="fan" data-mode="AUTO">AUTO</button>
+                    <button class="mode-btn" data-device="fan" data-mode="MANUAL" data-state="true">ON</button>
+                    <button class="mode-btn" data-device="fan" data-mode="MANUAL" data-state="false">OFF</button>
+                </div>
+            </article>
+
+            <article class="card actuator">
+                <div class="card-head">
+                    <div>
+                        <span class="label">LED</span>
+                        <h2 id="ledState">OFF</h2>
+                    </div>
+                    <span id="ledMode" class="mode">AUTO</span>
+                </div>
+                <div class="button-row">
+                    <button class="mode-btn" data-device="led" data-mode="AUTO">AUTO</button>
+                    <button class="mode-btn" data-device="led" data-mode="MANUAL" data-state="true">ON</button>
+                    <button class="mode-btn" data-device="led" data-mode="MANUAL" data-state="false">OFF</button>
+                </div>
+            </article>
+        </section>
+
+        <section class="card chart-card">
+            <div class="card-head">
+                <div>
+                    <span class="label">History</span>
+                    <h2>Environment</h2>
+                </div>
+                <select id="historyRange">
+                    <option value="60">1 hour</option>
+                    <option value="360">6 hours</option>
+                    <option value="1440">24 hours</option>
+                </select>
+            </div>
+            <div class="chart-wrap"><canvas id="historyChart"></canvas></div>
+        </section>
+
+        <section class="card settings">
+            <div class="card-head">
+                <div>
+                    <span class="label">AUTO rules</span>
+                    <h2>Control Settings</h2>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <label>
+                    Fan ON temperature
+                    <input id="fanOnTemp" type="number" step="0.1">
+                </label>
+
+                <label>
+                    Fan OFF temperature
+                    <input id="fanOffTemp" type="number" step="0.1">
+                </label>
+
+                <label>
+                    LED ON light
+                    <input id="ledOnLux" type="number" step="1">
+                </label>
+
+                <label>
+                    LED OFF light
+                    <input id="ledOffLux" type="number" step="1">
+                </label>
+            </div>
+
+            <button id="saveRules" class="primary-btn">Save Settings</button>
+            <span id="rulesMessage" class="message"></span>
+        </section>
+    </main>
+</div>
+
+<script src="/app.js"></script>
+</body>
+</html>
