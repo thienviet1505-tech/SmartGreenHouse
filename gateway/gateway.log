@@ -1,0 +1,18 @@
+2026-09-29 00:10:04 | INFO | ==============================================
+2026-09-29 00:10:04 | INFO | SMART GREENHOUSE WINDOWS GATEWAY
+2026-09-29 00:10:04 | INFO | ==============================================
+2026-09-29 00:10:04 | ERROR | Fatal gateway error: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+Traceback (most recent call last):
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\gateway.py", line 174, in run
+    self.bus.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\modbus\client.py", line 40, in open
+    self.serial = serial.Serial(self.port, self.baudrate, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE, timeout=self.timeout, write_timeout=self.timeout)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 33, in __init__
+    super(Serial, self).__init__(*args, **kwargs)
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialutil.py", line 244, in __init__
+    self.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 64, in open
+    raise SerialException("could not open port {!r}: {!r}".format(self.portstr, ctypes.WinError()))
+serial.serialutil.SerialException: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+2026-09-29 00:10:04 | INFO | Gateway stopped.

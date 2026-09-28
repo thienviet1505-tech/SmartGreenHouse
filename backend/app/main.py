@@ -1,32 +1,124 @@
 import asyncio
 from contextlib import asynccontextmanager
+from datetime import datetime, timezone
 from pathlib import Path
 
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
+from sqlalchemy import desc, select
 
 from .api.routes import router
 from .config import settings
 from .database import Base, SessionLocal, engine
-from .models import ActuatorState, ControlRule, GatewayStatus
+from .gateway_ws import gateway_manager
+from .models import ActuatorState, CommandLog, ControlRule, GatewayStatus, SensorReading
 from .services.simulator import GreenhouseSimulator
 from .websocket import manager
-
 
 FRONTEND_DIR = Path(__file__).resolve().parents[2] / "frontend"
 
 
 async def simulator_task():
-    simulator = GreenhouseSimulator(settings.simulator_interval)
-    await simulator.run()
+    await GreenhouseSimulator(settings.simulator_interval).run()
+
+
+def update_gateway_status(db, online: bool, rs485_ok: bool, last_error=None):
+    status = db.scalars(select(GatewayStatus).order_by(desc(GatewayStatus.id))).first()
+    if status is None:
+        status = GatewayStatus()
+        db.add(status)
+    status.online = online
+    status.rs485_ok = rs485_ok
+    status.last_error = last_error
+    status.timestamp = datetime.now(timezone.utc)
+    db.commit()
+
+
+def state_from_db(db):
+    sensor = db.scalars(select(SensorReading).order_by(desc(SensorReading.id))).first()
+    actuator = db.scalars(select(ActuatorState).order_by(desc(ActuatorState.id))).first()
+    gateway = db.scalars(select(GatewayStatus).order_by(desc(GatewayStatus.id))).first()
+    if not sensor or not actuator or not gateway:
+        return None
+    return {
+        "temperature": sensor.temperature,
+        "humidity": sensor.humidity,
+        "light": sensor.light,
+        "fan_state": actuator.fan_state,
+        "led_state": actuator.led_state,
+        "fan_mode": actuator.fan_mode,
+        "led_mode": actuator.led_mode,
+        "gateway_online": gateway.online,
+        "rs485_ok": gateway.rs485_ok,
+        "timestamp": sensor.timestamp,
+    }
+
+
+async def handle_gateway_message(message: dict):
+    message_type = message.get("type")
+
+    with SessionLocal() as db:
+        if message_type == "telemetry":
+            db.add(SensorReading(
+                temperature=float(message["temperature"]),
+                humidity=float(message["humidity"]),
+                light=float(message["light"]),
+                timestamp=datetime.now(timezone.utc),
+            ))
+            actuator = db.scalars(select(ActuatorState).order_by(desc(ActuatorState.id))).first()
+            if actuator is None:
+                actuator = ActuatorState()
+                db.add(actuator)
+            actuator.fan_state = bool(message["fan_state"])
+            actuator.led_state = bool(message["led_state"])
+            actuator.fan_mode = str(message["fan_mode"])
+            actuator.led_mode = str(message["led_mode"])
+            actuator.timestamp = datetime.now(timezone.utc)
+            update_gateway_status(db, True, bool(message.get("rs485_ok", True)), message.get("last_error"))
+            db.commit()
+            state = state_from_db(db)
+            if state:
+                await manager.broadcast(state)
+            return
+
+        if message_type == "status":
+            update_gateway_status(db, bool(message.get("online", True)), bool(message.get("rs485_ok", False)), message.get("last_error"))
+            state = state_from_db(db)
+            if state:
+                await manager.broadcast(state)
+            return
+
+        if message_type == "ack":
+            db.add(CommandLog(
+                source="GATEWAY",
+                device=str(message.get("device", "UNKNOWN")).upper(),
+                command=str(message.get("command", "ACK")),
+                result="ACK" if message.get("ok", False) else "ERROR",
+            ))
+            db.commit()
+            await manager.broadcast({
+                "type": "command_ack",
+                "request_id": message.get("request_id"),
+                "device": message.get("device"),
+                "ok": message.get("ok", False),
+                "message": message.get("message", ""),
+                "timestamp": message.get("timestamp"),
+            })
+            return
+
+        if message_type == "event":
+            await manager.broadcast({
+                "type": "gateway_event",
+                "level": message.get("level", "INFO"),
+                "message": message.get("message", ""),
+                "timestamp": message.get("timestamp"),
+            })
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
-
     with SessionLocal() as db:
         if db.query(ActuatorState).count() == 0:
             db.add(ActuatorState())
@@ -36,12 +128,8 @@ async def lifespan(app: FastAPI):
             db.add(GatewayStatus(online=False, rs485_ok=False))
         db.commit()
 
-    task = None
-    if settings.simulator_enabled:
-        task = asyncio.create_task(simulator_task())
-
+    task = asyncio.create_task(simulator_task()) if settings.simulator_enabled else None
     yield
-
     if task is not None:
         task.cancel()
         try:
@@ -51,7 +139,6 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title=settings.app_name, lifespan=lifespan)
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -59,7 +146,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 app.include_router(router)
 
 
@@ -71,6 +157,41 @@ async def websocket_live(websocket: WebSocket):
             await websocket.receive_text()
     except Exception:
         manager.disconnect(websocket)
+
+
+@app.websocket("/ws/gateway")
+async def websocket_gateway(websocket: WebSocket):
+    await websocket.accept()
+    authenticated = False
+    try:
+        hello = await asyncio.wait_for(websocket.receive_json(), timeout=10)
+        if hello.get("type") != "hello" or hello.get("token") != settings.gateway_token:
+            await websocket.close(code=1008)
+            return
+
+        authenticated = True
+        await gateway_manager.set(websocket)
+        with SessionLocal() as db:
+            update_gateway_status(db, True, False, None)
+        await websocket.send_json({"type": "hello_ack", "message": "Gateway authenticated"})
+
+        while True:
+            await handle_gateway_message(await websocket.receive_json())
+
+    except (WebSocketDisconnect, asyncio.TimeoutError):
+        pass
+    except Exception as exc:
+        print(f"Gateway websocket error: {exc}")
+    finally:
+        if authenticated:
+            await gateway_manager.clear(websocket)
+            with SessionLocal() as db:
+                update_gateway_status(db, False, False, "Gateway disconnected")
+                state = state_from_db(db)
+            if state:
+                state["gateway_online"] = False
+                state["rs485_ok"] = False
+                await manager.broadcast(state)
 
 
 @app.get("/")

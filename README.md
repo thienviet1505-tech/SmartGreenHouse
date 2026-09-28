@@ -164,3 +164,10 @@ The history chart now has:
 - A maximum of 360 displayed points, so long histories do not make the chart unstable or unreadable.
 - No chart animation during realtime refresh, preventing visual "drifting".
 - Automatic X-axis label skipping.
+
+
+## Hardware integration
+
+The Windows Gateway is in `gateway/`. It connects to the web backend over `/ws/gateway` and controls the RS485 devices locally. When a web button is clicked, the gateway prints the hardware control log on the laptop and writes it to `gateway/gateway.log`.
+
+For local testing set `WEB_WS_URL=ws://127.0.0.1:8000/ws/gateway`. For a public HTTPS server use `wss://your-domain.com/ws/gateway`. The same `GATEWAY_TOKEN` must be configured on both sides.

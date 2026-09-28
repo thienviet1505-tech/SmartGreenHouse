@@ -199,7 +199,20 @@ function connectWebSocket() {
 
     ws.onmessage = (event) => {
         try {
-            renderState(JSON.parse(event.data));
+            const payload = JSON.parse(event.data);
+            if (payload.type === "command_ack") {
+                console.info(`[GATEWAY ACK] ${payload.device}: ${payload.message}`);
+                if (!payload.ok) {
+                    alert(`Hardware command failed: ${payload.message}`);
+                }
+                loadState().catch(console.error);
+                return;
+            }
+            if (payload.type === "gateway_event") {
+                console.info(`[GATEWAY ${payload.level}] ${payload.message}`);
+                return;
+            }
+            renderState(payload);
         } catch {
             // Ignore malformed realtime messages.
         }
