@@ -17,9 +17,18 @@ smart-greenhouse-web/
 │       ├── schemas.py
 │       ├── websocket.py
 │       ├── gateway_ws.py
+<<<<<<< HEAD
 │       ├── api/routes.py
 │       └── services/
 │           ├── command_bus.py
+=======
+│       ├── security.py
+│       ├── timeutil.py
+│       ├── api/routes.py
+│       └── services/
+│           ├── command_bus.py
+│           ├── state.py
+>>>>>>> Rac
 │           └── simulator.py
 ├── frontend/
 │   ├── index.html
@@ -37,7 +46,14 @@ smart-greenhouse-web/
     ├── devices/light.py
     ├── devices/relay.py
     ├── control/controller.py
+<<<<<<< HEAD
     └── tools/set_light_id.py
+=======
+    └── tools/
+        ├── probe_modbus.py
+        ├── set_light_id.py
+        └── set_relay_id.py
+>>>>>>> Rac
 ```
 
 ## Separation
@@ -65,9 +81,15 @@ Windows Gateway
   │ USB-RS485
   ▼
 Modbus RTU
+<<<<<<< HEAD
   ├── SHT30
   ├── SEN0644
   └── Relay 2CH
+=======
+  ├── TH10S-B-PE (SHT30)  id 1
+  ├── SEN0644             id 2
+  └── Relay 2CH           id 3
+>>>>>>> Rac
 ```
 
 ## Web command logging

@@ -3,3 +3,8 @@ __pycache__/
 *.pyc
 smart_greenhouse.db
 .env
+<<<<<<< HEAD
+=======
+gateway/.env
+*.log
+>>>>>>> Rac

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Smart Greenhouse Web
 
 Web/cloud side of the smart greenhouse project.
@@ -99,6 +100,44 @@ Modbus RTU
 
 The web project should never import `serial`, `pymodbus`, or hardware-specific modules.
 
+=======
+# Smart Greenhouse
+
+Web dashboard (FastAPI) + Windows hardware gateway (USB-RS485 / Modbus RTU) for a small greenhouse:
+1 light sensor (DFRobot SEN0644), 1 temperature/humidity sensor (TH10S-B-PE, SHT30) and a 2-channel relay
+(fan + LED). The web side contains no serial code; only `gateway/` talks to RS485.
+
+```text
+Browser --HTTPS/WebSocket--> FastAPI --WebSocket--> Windows Gateway --USB-RS485--> Modbus RTU devices
+```
+
+## Run on Windows
+
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r backend\requirements.txt
+pip install -r gateway\requirements.txt
+copy .env.example .env             # set GATEWAY_TOKEN and DASHBOARD_TOKEN
+copy gateway\.env.example gateway\.env
+```
+
+1. `run_web.bat` - web server on port 8000 (reads the root `.env`).
+2. `run_gateway.bat` - hardware gateway (reads `gateway\.env`). Set the Modbus addresses first:
+   see `gateway\README.md`.
+
+Open `http://127.0.0.1:8000`. API docs: `/docs`.
+
+`SIMULATOR_ENABLED=true` in `.env` runs the built-in simulator instead of real hardware.
+
+## Security (read before exposing the site to the internet)
+
+* Set `DASHBOARD_TOKEN` in `.env`. Without it anyone who can reach the server can switch the fan/LED.
+  The browser asks for the token once and keeps it in `localStorage`.
+* Set a real `GATEWAY_TOKEN` (the same value in `.env` and `gateway\.env`).
+* Use HTTPS (reverse proxy / tunnel) so the tokens are not sent in clear text.
+* The server logs a warning at start-up if either token is still the default/empty.
+>>>>>>> Rac
 
 ## Access from another phone/laptop on the same Wi-Fi/LAN
 
@@ -168,6 +207,12 @@ The history chart now has:
 
 ## Hardware integration
 
+<<<<<<< HEAD
 The Windows Gateway is in `gateway/`. It connects to the web backend over `/ws/gateway` and controls the RS485 devices locally. When a web button is clicked, the gateway prints the hardware control log on the laptop and writes it to `gateway/gateway.log`.
 
 For local testing set `WEB_WS_URL=ws://127.0.0.1:8000/ws/gateway`. For a public HTTPS server use `wss://your-domain.com/ws/gateway`. The same `GATEWAY_TOKEN` must be configured on both sides.
+=======
+The Windows Gateway (`gateway/`) connects to the web backend over `/ws/gateway` and controls the RS485
+devices locally. Web buttons are logged on the laptop and in `gateway/gateway.log`.
+`WEB_WS_URL=ws://127.0.0.1:8000/ws/gateway` for local tests, `wss://your-domain.com/ws/gateway` for a public server.
+>>>>>>> Rac
