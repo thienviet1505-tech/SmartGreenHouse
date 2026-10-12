@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+smart_greenhouse.db
+.env
+gateway/.env
+*.log
