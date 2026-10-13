@@ -1,3 +1,4 @@
+import os
 import threading
 import time
 
@@ -12,8 +13,11 @@ class ModbusRTU:
     """Minimal Modbus RTU master (FC01/03/04/05/06) over a serial port."""
 
     # Modbus RTU needs >= 3.5 character times of silence between frames
-    # (~4 ms at 9600 baud). The SEN0644 datasheet asks for >= 4 byte times.
-    FRAME_GAP = 0.006
+    # (~4 ms at 9600 baud). Some relay boards need much more, because they also
+    # hear the other devices' replies on the shared bus, so the default is
+    # generous. Tune with FRAME_GAP (seconds) and MODBUS_RETRIES in gateway/.env.
+    DEFAULT_FRAME_GAP = 0.05
+    DEFAULT_RETRIES = 2
     # pyserial's read(n) blocks until n bytes arrive OR the serial timeout
     # expires. Keep the serial timeout short and enforce the real deadline
     # (self.timeout) ourselves, otherwise every request costs the full timeout.
@@ -26,6 +30,8 @@ class ModbusRTU:
         self.serial = None
         self.lock = threading.RLock()
         self._last_activity = 0.0
+        self.frame_gap = float(os.getenv("FRAME_GAP", self.DEFAULT_FRAME_GAP))
+        self.retries = int(os.getenv("MODBUS_RETRIES", self.DEFAULT_RETRIES))  # writes only
 
     # ---------------------------------------------------------------- CRC
     @staticmethod
@@ -70,7 +76,7 @@ class ModbusRTU:
             raise ModbusError("RS485 serial port is not open")
 
     def _wait_gap(self):
-        wait = self.FRAME_GAP - (time.monotonic() - self._last_activity)
+        wait = self.frame_gap - (time.monotonic() - self._last_activity)
         if wait > 0:
             time.sleep(wait)
 
@@ -97,7 +103,20 @@ class ModbusRTU:
             raise ModbusError("Invalid Modbus CRC")
         return frame
 
-    def _transact(self, request: bytes, slave: int, function: int) -> bytes:
+    def _transact(self, request: bytes, slave: int, function: int, retries: int = 0) -> bytes:
+        """One request/response. Only timeouts and CRC errors are retried
+        (and only for idempotent writes); Modbus exceptions are final."""
+        last_error = None
+        for _ in range(retries + 1):
+            try:
+                return self._transact_once(request, slave, function)
+            except ModbusError as exc:
+                last_error = exc
+                if "Timeout" not in str(exc) and "CRC" not in str(exc):
+                    raise
+        raise last_error
+
+    def _transact_once(self, request: bytes, slave: int, function: int) -> bytes:
         with self.lock:
             self._ensure_open()
             self._wait_gap()
@@ -164,9 +183,9 @@ class ModbusRTU:
 
     def write_single_register(self, slave: int, address: int, value: int):
         payload = bytes([slave, 0x06, address >> 8, address & 0xFF, value >> 8, value & 0xFF])
-        self._transact(self.frame(payload), slave, 0x06)
+        self._transact(self.frame(payload), slave, 0x06, retries=self.retries)
 
     def write_single_coil(self, slave: int, address: int, on: bool):
         value = 0xFF00 if on else 0x0000
         payload = bytes([slave, 0x05, address >> 8, address & 0xFF, value >> 8, value & 0xFF])
-        self._transact(self.frame(payload), slave, 0x05)
+        self._transact(self.frame(payload), slave, 0x05, retries=self.retries)

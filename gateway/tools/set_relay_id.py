@@ -51,13 +51,20 @@ def main():
         reply = bus.raw_exchange(frame, wait=0.8)
         print("Raw reply:", reply.hex(" ").upper() if reply else "(none)")
         time.sleep(0.5)
-        try:
-            coils = bus.read_coils(args.new_id, 0, 2)
-            print(f"OK: relay now answers at address {args.new_id} (coils={coils}).")
+        confirmed = None
+        try:  # many of these boards do not implement FC01, so FC05 is the fallback
+            confirmed = f"coils={bus.read_coils(args.new_id, 0, 2)}"
+        except ModbusError:
+            try:
+                bus.write_single_coil(args.new_id, 0, False)  # harmless: channel 1 OFF
+                confirmed = "channel 1 OFF acknowledged"
+            except ModbusError as exc:
+                print(f"Could not confirm the new address: {exc}")
+        if confirmed:
+            print(f"OK: relay now answers at address {args.new_id} ({confirmed}).")
             print("Set RELAY_ID in gateway/.env to this value.")
-        except ModbusError as exc:
-            print(f"Could not confirm the new address: {exc}")
-            print("Try: power-cycle the relay board and run probe_modbus.py --ids 1,2,3,255;")
+        else:
+            print("Try: power-cycle the relay board and run test_relay.py --ids 1,255,%d;" % args.new_id)
             print("if nothing changes, use the procedure in your board's manual.")
     finally:
         bus.close()
