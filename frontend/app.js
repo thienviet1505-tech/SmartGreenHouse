@@ -8,16 +8,10 @@ function setText(id, value) {
 }
 
 function renderState(state) {
-<<<<<<< HEAD
-    setText("temperature", Number(state.temperature).toFixed(1));
-    setText("humidity", Number(state.humidity).toFixed(1));
-    setText("light", Math.round(state.light).toLocaleString("en-US"));
-=======
     const has = (value) => value !== null && value !== undefined;
     setText("temperature", has(state.temperature) ? Number(state.temperature).toFixed(1) : "--");
     setText("humidity", has(state.humidity) ? Number(state.humidity).toFixed(1) : "--");
     setText("light", has(state.light) ? Math.round(state.light).toLocaleString("en-US") : "--");
->>>>>>> Rac
     setText("fanState", state.fan_state ? "ON" : "OFF");
     setText("ledState", state.led_state ? "ON" : "OFF");
     setText("fanMode", state.fan_mode);
@@ -30,14 +24,6 @@ function renderState(state) {
     setText("gatewayStatus", online ? "Gateway Online" : "Gateway Offline");
 }
 
-<<<<<<< HEAD
-async function fetchJson(url, options = {}) {
-    const response = await fetch(url, {
-        headers: { "Content-Type": "application/json" },
-        ...options,
-    });
-
-=======
 const TOKEN_KEY = "greenhouse_access_token";
 
 function getToken() {
@@ -70,7 +56,6 @@ async function fetchJson(url, options = {}, retry = true) {
         }
     }
 
->>>>>>> Rac
     if (!response.ok) {
         const body = await response.json().catch(() => ({}));
         throw new Error(body.detail || `HTTP ${response.status}`);
@@ -236,11 +221,7 @@ function connectWebSocket() {
     ws = new WebSocket(`${protocol}://${location.host}/ws/live`);
 
     ws.onopen = () => {
-<<<<<<< HEAD
-        ws.send("subscribe");
-=======
         ws.send(JSON.stringify({ type: "auth", token: getToken() }));
->>>>>>> Rac
     };
 
     ws.onmessage = (event) => {
@@ -264,9 +245,6 @@ function connectWebSocket() {
         }
     };
 
-<<<<<<< HEAD
-    ws.onclose = () => {
-=======
     ws.onclose = (event) => {
         if (event.code === 1008) {  // token rejected
             localStorage.removeItem(TOKEN_KEY);
@@ -274,7 +252,6 @@ function connectWebSocket() {
                 return;
             }
         }
->>>>>>> Rac
         setTimeout(connectWebSocket, 2000);
     };
 
@@ -316,8 +293,5 @@ $("saveRules").addEventListener("click", saveRules);
 
     connectWebSocket();
     setInterval(loadHistory, 10000);
-<<<<<<< HEAD
-=======
     setInterval(() => loadState().catch(() => {}), 5000);
->>>>>>> Rac
 })();

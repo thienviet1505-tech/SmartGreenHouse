@@ -1,9 +1,6 @@
 from dataclasses import dataclass
 
-<<<<<<< HEAD
-=======
 
->>>>>>> Rac
 @dataclass
 class ControlRules:
     fan_on_temp: float = 30.0
@@ -11,10 +8,7 @@ class ControlRules:
     led_on_lux: float = 3000.0
     led_off_lux: float = 5000.0
 
-<<<<<<< HEAD
-=======
 
->>>>>>> Rac
 class AutoController:
     def __init__(self, rules):
         self.rules = rules
@@ -25,24 +19,15 @@ class AutoController:
         self.rules = rules
 
     def evaluate(self, temperature, light, fan_state, led_state):
-<<<<<<< HEAD
-        next_fan, next_led = fan_state, led_state
-        if self.fan_mode == "AUTO":
-=======
         """temperature/light may be None (sensor missing or stale): the
         matching output then simply keeps its current state."""
         next_fan, next_led = fan_state, led_state
         if self.fan_mode == "AUTO" and temperature is not None:
->>>>>>> Rac
             if temperature >= self.rules.fan_on_temp:
                 next_fan = True
             elif temperature <= self.rules.fan_off_temp:
                 next_fan = False
-<<<<<<< HEAD
-        if self.led_mode == "AUTO":
-=======
         if self.led_mode == "AUTO" and light is not None:
->>>>>>> Rac
             if light <= self.rules.led_on_lux:
                 next_led = True
             elif light >= self.rules.led_off_lux:

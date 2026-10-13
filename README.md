@@ -1,106 +1,3 @@
-<<<<<<< HEAD
-# Smart Greenhouse Web
-
-Web/cloud side of the smart greenhouse project.
-
-## Scope
-
-This project intentionally contains **no RS485/Modbus hardware code**.
-
-The future hardware side will be a separate Windows Gateway:
-
-```text
-gateway/
-    RS485 + Modbus RTU
-    SHT30
-    DFRobot SEN0644
-    Relay 2CH
-    Local AUTO control
-    MQTT/HTTP client
-```
-
-The web side is responsible for:
-
-```text
-Browser
-   ↓
-FastAPI
-   ├── REST API
-   ├── WebSocket
-   ├── SQLite database (development)
-   └── Command/telemetry service boundary
-```
-
-The current version includes a simulator so the website can be tested before the real gateway is connected.
-
-## Run on Windows
-
-### 1. Create and activate a virtual environment
-
-```powershell
-py -m venv .venv
-.\.venv\Scripts\Activate.ps1
-```
-
-### 2. Install dependencies
-
-```powershell
-pip install -r backend\requirements.txt
-```
-
-### 3. Start the server
-
-From the project root:
-
-```powershell
-uvicorn backend.app.main:app --reload
-```
-
-Open:
-
-```text
-http://127.0.0.1:8000
-```
-
-API documentation:
-
-```text
-http://127.0.0.1:8000/docs
-```
-
-## Current behavior
-
-- Temperature, humidity and light values are simulated.
-- Fan and LED can be switched from the web interface.
-- AUTO/MANUAL mode is displayed and stored.
-- The dashboard receives live updates through WebSocket.
-- Telemetry is stored in SQLite.
-- The command bus is currently a mock implementation.
-
-## Future hardware integration
-
-The real Gateway will replace the simulator and command-bus mock.
-
-The intended architecture is:
-
-```text
-Browser
-   ↓ HTTPS / WebSocket
-Cloud FastAPI
-   ↓ command bus
-MQTT Broker
-   ↓
-Windows Gateway
-   ↓ USB-RS485
-Modbus RTU
-   ├── SHT30
-   ├── DFRobot SEN0644
-   └── Relay 2CH
-```
-
-The web project should never import `serial`, `pymodbus`, or hardware-specific modules.
-
-=======
 # Smart Greenhouse
 
 Web dashboard (FastAPI) + Windows hardware gateway (USB-RS485 / Modbus RTU) for a small greenhouse:
@@ -137,7 +34,6 @@ Open `http://127.0.0.1:8000`. API docs: `/docs`.
 * Set a real `GATEWAY_TOKEN` (the same value in `.env` and `gateway\.env`).
 * Use HTTPS (reverse proxy / tunnel) so the tokens are not sent in clear text.
 * The server logs a warning at start-up if either token is still the default/empty.
->>>>>>> Rac
 
 ## Access from another phone/laptop on the same Wi-Fi/LAN
 
@@ -207,12 +103,6 @@ The history chart now has:
 
 ## Hardware integration
 
-<<<<<<< HEAD
-The Windows Gateway is in `gateway/`. It connects to the web backend over `/ws/gateway` and controls the RS485 devices locally. When a web button is clicked, the gateway prints the hardware control log on the laptop and writes it to `gateway/gateway.log`.
-
-For local testing set `WEB_WS_URL=ws://127.0.0.1:8000/ws/gateway`. For a public HTTPS server use `wss://your-domain.com/ws/gateway`. The same `GATEWAY_TOKEN` must be configured on both sides.
-=======
 The Windows Gateway (`gateway/`) connects to the web backend over `/ws/gateway` and controls the RS485
 devices locally. Web buttons are logged on the laptop and in `gateway/gateway.log`.
 `WEB_WS_URL=ws://127.0.0.1:8000/ws/gateway` for local tests, `wss://your-domain.com/ws/gateway` for a public server.
->>>>>>> Rac

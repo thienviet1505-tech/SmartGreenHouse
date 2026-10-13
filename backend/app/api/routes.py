@@ -9,33 +9,6 @@ from ..config import settings
 from ..database import get_db
 from ..gateway_ws import gateway_manager
 from ..models import ActuatorState, CommandLog, ControlRule, GatewayStatus, SensorReading
-<<<<<<< HEAD
-from ..schemas import ControlCommand, ControlRules, TelemetryPayload
-from ..services.command_bus import command_bus
-from ..websocket import manager
-
-router = APIRouter(prefix="/api")
-
-
-def current_state(db: Session):
-    sensor = db.scalar(select(SensorReading).order_by(desc(SensorReading.id)))
-    actuator = db.scalar(select(ActuatorState).order_by(desc(ActuatorState.id)))
-    gateway = db.scalar(select(GatewayStatus).order_by(desc(GatewayStatus.id)))
-    if sensor is None or actuator is None or gateway is None:
-        raise HTTPException(status_code=503, detail="System state is not ready")
-    return {
-        "temperature": sensor.temperature,
-        "humidity": sensor.humidity,
-        "light": sensor.light,
-        "fan_state": actuator.fan_state,
-        "led_state": actuator.led_state,
-        "fan_mode": actuator.fan_mode,
-        "led_mode": actuator.led_mode,
-        "gateway_online": gateway.online,
-        "rs485_ok": gateway.rs485_ok,
-        "timestamp": sensor.timestamp,
-    }
-=======
 from ..schemas import ControlCommand, ControlRules
 from ..security import require_dashboard_token
 from ..services.command_bus import command_bus
@@ -48,7 +21,6 @@ router = APIRouter(prefix="/api", dependencies=[Depends(require_dashboard_token)
 
 def current_state(db: Session):
     return build_state(db)
->>>>>>> Rac
 
 
 @router.get("/state")
@@ -64,25 +36,12 @@ def get_status(db: Session = Depends(get_db)):
     return {
         "gateway_online": gateway.online,
         "rs485_ok": gateway.rs485_ok,
-<<<<<<< HEAD
-        "timestamp": gateway.timestamp,
-=======
         "timestamp": iso_utc(gateway.timestamp),
->>>>>>> Rac
         "last_error": gateway.last_error,
     }
 
 
 @router.get("/history")
-<<<<<<< HEAD
-def get_history(minutes: int = 60, db: Session = Depends(get_db)):
-    since = datetime.now(timezone.utc) - timedelta(minutes=max(1, min(minutes, 10080)))
-    rows = db.scalars(
-        select(SensorReading).where(SensorReading.timestamp >= since).order_by(SensorReading.timestamp)
-    ).all()
-    return [
-        {"timestamp": row.timestamp, "temperature": row.temperature, "humidity": row.humidity, "light": row.light}
-=======
 def get_history(minutes: int = 60, max_points: int = 720, db: Session = Depends(get_db)):
     minutes = max(1, min(minutes, 10080))
     max_points = max(10, min(max_points, 2000))
@@ -96,7 +55,6 @@ def get_history(minutes: int = 60, max_points: int = 720, db: Session = Depends(
     return [
         {"timestamp": iso_utc(row.timestamp), "temperature": row.temperature,
          "humidity": row.humidity, "light": row.light}
->>>>>>> Rac
         for row in rows
     ]
 
@@ -196,30 +154,3 @@ async def update_rules(payload: ControlRules, db: Session = Depends(get_db)):
             raise HTTPException(status_code=503, detail="Gateway connection lost while applying rules")
 
     return {**payload.model_dump(), "gateway_applied": gateway_manager.connected}
-<<<<<<< HEAD
-
-
-@router.post("/ingest/telemetry")
-async def ingest_telemetry(payload: TelemetryPayload, db: Session = Depends(get_db)):
-    db.add(SensorReading(temperature=payload.temperature, humidity=payload.humidity, light=payload.light))
-    actuator = db.scalar(select(ActuatorState).order_by(desc(ActuatorState.id)))
-    if actuator is None:
-        actuator = ActuatorState()
-        db.add(actuator)
-    actuator.fan_state = payload.fan_state
-    actuator.led_state = payload.led_state
-    actuator.fan_mode = payload.fan_mode
-    actuator.led_mode = payload.led_mode
-    actuator.timestamp = datetime.now(timezone.utc)
-    gateway = db.scalar(select(GatewayStatus).order_by(desc(GatewayStatus.id)))
-    if gateway is None:
-        gateway = GatewayStatus()
-        db.add(gateway)
-    gateway.online = payload.gateway_online
-    gateway.rs485_ok = payload.rs485_ok
-    gateway.timestamp = datetime.now(timezone.utc)
-    db.commit()
-    await manager.broadcast(current_state(db))
-    return {"accepted": True}
-=======
->>>>>>> Rac
