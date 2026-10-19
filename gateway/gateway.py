@@ -1,4 +1,5 @@
 import json
+import os
 import threading
 import time
 from datetime import datetime, timezone
@@ -28,11 +29,17 @@ class GreenhouseGateway:
         self.relay = Relay2CH(self.bus, settings.relay_id)
         self.controller = AutoController(ControlRules(
             settings.fan_on_temp, settings.fan_off_temp, settings.led_on_lux, settings.led_off_lux))
+        if {settings.fan_channel, settings.led_channel} != {0, 1}:
+            raise ValueError("FAN_CHANNEL and LED_CHANNEL must be 0 and 1 (in either order)")
         self.ws = None
+        self.ws_app = None
         self.ws_lock = threading.Lock()
         self.control_lock = threading.RLock()  # poll thread vs. web commands
         self.ws_connected = False
-        self.running = True
+        self.stop_event = threading.Event()
+        self.threads = []
+        self._relay_error = None       # last relay failure, cleared by the next successful write
+        self._relay_retry_at = 0.0     # AUTO control does not touch the relay before this time
         self.temperature = None
         self.humidity = None
         self.light_lux = None
@@ -64,9 +71,30 @@ class GreenhouseGateway:
                       "ok": ok, "message": message, "timestamp": now_iso()})
 
     # ------------------------------------------------------------- relays
+    @property
+    def fan_state(self):
+        return self.relay.states[settings.fan_channel]
+
+    @property
+    def led_state(self):
+        return self.relay.states[settings.led_channel]
+
+    def _relay_ok(self):
+        self._relay_error = None
+        self._relay_retry_at = 0.0
+
+    def _relay_failed(self, exc):
+        self._relay_error = f"RELAY(id={settings.relay_id}): {exc}"
+        self._relay_retry_at = time.monotonic() + settings.relay_retry_seconds
+
     def set_relay_state(self, device, state, source, reason):
         channel = settings.fan_channel if device == "fan" else settings.led_channel
-        self.relay.set_channel(channel, state)
+        try:
+            self.relay.set_channel(channel, state)
+        except Exception as exc:
+            self._relay_failed(exc)
+            raise
+        self._relay_ok()
         self.log.info("[%s] %s -> %s | CH%d | reason=%s", source, device.upper(),
                       "ON" if state else "OFF", channel + 1, reason)
 
@@ -74,8 +102,10 @@ class GreenhouseGateway:
         """Start from a known state: both relays OFF (also fail-safe)."""
         try:
             self.relay.initialize_off()
+            self._relay_ok()
             self.log.info("[RELAY] id=%d initialised: FAN=OFF LED=OFF", settings.relay_id)
         except Exception as exc:
+            self._relay_failed(exc)
             self.log.warning("[RELAY] id=%d not reachable at start-up: %s", settings.relay_id, exc)
 
     def handle_control(self, message):
@@ -106,6 +136,8 @@ class GreenhouseGateway:
         except Exception as exc:
             self.log.error("[WEB COMMAND ERROR] %s | %s", device, exc)
             self.ack(request_id, device, command, False, str(exc))
+        else:
+            self.publish_telemetry()  # the website sees the new state now, not at the next 2 s tick
 
     def _set_mode(self, device, mode):
         if device == "fan":
@@ -167,17 +199,29 @@ class GreenhouseGateway:
         temperature = self._fresh(self.temperature, self.th_time)
         lux = self._fresh(self.light_lux, self.light_time)
         with self.control_lock:
-            next_fan, next_led = self.controller.evaluate(temperature, lux, self.relay.fan_state, self.relay.led_state)
-            if self.controller.fan_mode == "AUTO" and next_fan != self.relay.fan_state:
-                try:
-                    self.set_relay_state("fan", next_fan, "AUTO", f"temperature={temperature:.1f}°C")
-                except Exception as exc:
-                    errors.append(f"RELAY(id={settings.relay_id}): {exc}")
-            if self.controller.led_mode == "AUTO" and next_led != self.relay.led_state:
-                try:
-                    self.set_relay_state("led", next_led, "AUTO", f"light={lux:.1f} lux")
-                except Exception as exc:
-                    errors.append(f"RELAY(id={settings.relay_id}): {exc}")
+            next_fan, next_led = self.controller.evaluate(temperature, lux, self.fan_state, self.led_state)
+            wanted = []
+            if self.controller.fan_mode == "AUTO" and next_fan != self.fan_state:
+                wanted.append(("fan", next_fan, f"temperature={temperature:.1f}°C"))
+            if self.controller.led_mode == "AUTO" and next_led != self.led_state:
+                wanted.append(("led", next_led, f"light={lux:.1f} lux"))
+
+            if time.monotonic() >= self._relay_retry_at:
+                if wanted:
+                    for device, state, reason in wanted:
+                        try:
+                            self.set_relay_state(device, state, "AUTO", reason)
+                        except Exception:
+                            break  # relay is not answering: skip the rest, retry after RELAY_RETRY_SECONDS
+                elif self._relay_error:
+                    try:  # nothing to switch, but the relay was failing: probe it with an idempotent write
+                        self.relay.restore()
+                        self._relay_ok()
+                        self.log.info("[RELAY] id=%d answering again", settings.relay_id)
+                    except Exception as exc:
+                        self._relay_failed(exc)
+        if self._relay_error:
+            errors.append(self._relay_error)
         return errors
 
     def read_hardware(self):
@@ -213,20 +257,16 @@ class GreenhouseGateway:
             self._logged_error, self._logged_at = text, now
 
     def publish_telemetry(self):
-        if self.temperature is None or self.humidity is None or self.light_lux is None:
-            # No complete reading yet: report link status only (the backend
-            # cannot store telemetry with empty values).
-            self.send_ws({"type": "status", "online": True, "rs485_ok": self.rs485_ok,
-                          "last_error": self.last_error or "Waiting for first sensor readings",
-                          "timestamp": now_iso()})
-            return
+        """Always sent, so the website sees relay state/modes even while a sensor is
+        down. A sensor that failed or is older than SENSOR_STALE_SECONDS is sent as
+        null (never as its last good value)."""
         self.send_ws({
             "type": "telemetry",
-            "temperature": self.temperature,
-            "humidity": self.humidity,
-            "light": self.light_lux,
-            "fan_state": self.relay.fan_state,
-            "led_state": self.relay.led_state,
+            "temperature": self._fresh(self.temperature, self.th_time),
+            "humidity": self._fresh(self.humidity, self.th_time),
+            "light": self._fresh(self.light_lux, self.light_time),
+            "fan_state": self.fan_state,
+            "led_state": self.led_state,
             "fan_mode": self.controller.fan_mode,
             "led_mode": self.controller.led_mode,
             "rs485_ok": self.rs485_ok,
@@ -237,7 +277,7 @@ class GreenhouseGateway:
     def poll_loop(self):
         self.log.info("[RS485] COM=%s baud=%d | TH=%d | LIGHT=%d | RELAY=%d", settings.com_port,
                       settings.baudrate, settings.sht30_id, settings.light_id, settings.relay_id)
-        while self.running:
+        while not self.stop_event.is_set():
             try:
                 self.read_hardware()
                 now = time.monotonic()
@@ -246,37 +286,52 @@ class GreenhouseGateway:
                     self.last_telemetry = now
             except Exception as exc:  # never let the poll thread die
                 self.log.exception("[POLL] unexpected error: %s", exc)
-            time.sleep(settings.poll_interval)
+            self.stop_event.wait(settings.poll_interval)
 
     def websocket_loop(self):
-        while self.running:
+        while not self.stop_event.is_set():
             try:
                 ws = websocket.WebSocketApp(settings.web_ws_url, on_open=self.on_open, on_message=self.on_message,
                                             on_error=self.on_error, on_close=self.on_close)
+                self.ws_app = ws
                 ws.run_forever(ping_interval=20, ping_timeout=10)
             except Exception as exc:
                 self.log.error("[WEB] Connection error: %s", exc)
-            if self.running:
-                time.sleep(3)
+            self.stop_event.wait(3)
 
     def run(self):
         self.log.info("==============================================")
         self.log.info("SMART GREENHOUSE WINDOWS GATEWAY")
         self.log.info("==============================================")
+        self.log.info("[TH] function=%d temp_reg=%d hum_reg=%d scale=%g", settings.th_function,
+                      settings.th_temp_reg, settings.th_hum_reg, settings.th_scale)
+        if "TH_TEMP_REG" not in os.environ or "TH_HUM_REG" not in os.environ:
+            self.log.warning("[TH] TH_TEMP_REG / TH_HUM_REG are not set in gateway/.env, so the built-in defaults "
+                             "are used. Check them against the sensor manual (tools/probe_modbus.py).")
         try:
             self.bus.open()
             self.log.info("[RS485] Port opened successfully")
             self.init_relays()
-            threading.Thread(target=self.poll_loop, daemon=True).start()
-            threading.Thread(target=self.websocket_loop, daemon=True).start()
-            while self.running:
+            self.threads = [threading.Thread(target=self.poll_loop, daemon=True),
+                            threading.Thread(target=self.websocket_loop, daemon=True)]
+            for thread in self.threads:
+                thread.start()
+            while not self.stop_event.is_set():
                 time.sleep(1)
         except KeyboardInterrupt:
             self.log.info("Stopping gateway...")
         except Exception as exc:
             self.log.exception("Fatal gateway error: %s", exc)
         finally:
-            self.running = False
+            self.stop_event.set()
+            if self.ws_app is not None:
+                try:
+                    self.ws_app.close()
+                except Exception:
+                    pass
+            if self.threads:
+                self.threads[0].join(timeout=3)  # poll thread must finish before the COM port is closed
+                self.threads[1].join(timeout=1)  # websocket thread is a daemon
             self.bus.close()
             self.log.info("Gateway stopped.")
 

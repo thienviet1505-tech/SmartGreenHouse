@@ -16,3 +16,38 @@ Traceback (most recent call last):
     raise SerialException("could not open port {!r}: {!r}".format(self.portstr, ctypes.WinError()))
 serial.serialutil.SerialException: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
 2026-09-29 00:10:04 | INFO | Gateway stopped.
+2026-10-13 18:46:44 | INFO | ==============================================
+2026-10-13 18:46:44 | INFO | SMART GREENHOUSE WINDOWS GATEWAY
+2026-10-13 18:46:44 | INFO | ==============================================
+2026-10-13 18:46:44 | INFO | [RS485] Port opened successfully
+2026-10-13 18:46:44 | INFO | [RELAY] id=3 initialised: FAN=OFF LED=OFF
+2026-10-13 18:46:44 | INFO | [RS485] COM=COM5 baud=9600 | TH=1 | LIGHT=2 | RELAY=3
+2026-10-13 18:46:44 | INFO | [WEB] Connected to ws://127.0.0.1:8000/ws/gateway
+2026-10-13 18:46:44 | INFO | [WEB] Authentication accepted
+2026-10-13 18:46:44 | INFO | [WEB RULES] FAN 27.0/30.0°C | LED 3000/5000 lux
+2026-10-13 18:46:45 | INFO | [AUTO] FAN -> ON | CH1 | reason=temperature=39.2°C
+2026-10-13 18:46:45 | INFO | [AUTO] LED -> ON | CH2 | reason=light=358.2 lux
+2026-10-13 18:47:12 | INFO | [AUTO] LED -> OFF | CH2 | reason=light=5792.6 lux
+2026-10-13 18:47:17 | INFO | [AUTO] LED -> ON | CH2 | reason=light=1777.8 lux
+2026-10-13 18:47:48 | INFO | Stopping gateway...
+2026-10-13 18:47:48 | INFO | Gateway stopped.
+2026-10-19 10:37:40 | INFO | ==============================================
+2026-10-19 10:37:40 | INFO | SMART GREENHOUSE WINDOWS GATEWAY
+2026-10-19 10:37:40 | INFO | ==============================================
+2026-10-19 10:37:40 | INFO | [TH] function=3 temp_reg=0 hum_reg=1 scale=10
+2026-10-19 10:37:40 | WARNING | [TH] TH_TEMP_REG / TH_HUM_REG are not set in gateway/.env, so the built-in defaults are used. Check them against the sensor manual (tools/probe_modbus.py).
+2026-10-19 10:37:40 | ERROR | Fatal gateway error: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+Traceback (most recent call last):
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\gateway.py", line 312, in run
+    self.bus.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\modbus\client.py", line 60, in open
+    self.serial = serial.Serial(
+                  ^^^^^^^^^^^^^^
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 33, in __init__
+    super(Serial, self).__init__(*args, **kwargs)
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialutil.py", line 244, in __init__
+    self.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 64, in open
+    raise SerialException("could not open port {!r}: {!r}".format(self.portstr, ctypes.WinError()))
+serial.serialutil.SerialException: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+2026-10-19 10:37:40 | INFO | Gateway stopped.

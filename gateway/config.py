@@ -26,6 +26,9 @@ class Settings:
     poll_interval: float = _float("POLL_INTERVAL", 1.0)
     telemetry_interval: float = _float("TELEMETRY_INTERVAL", 2.0)
     sensor_stale_seconds: float = _float("SENSOR_STALE_SECONDS", 20.0)
+    # After a failed relay write, AUTO control waits this long before trying again
+    # (a relay that does not answer would otherwise stall every poll cycle).
+    relay_retry_seconds: float = _float("RELAY_RETRY_SECONDS", 10.0)
 
     # --- web link
     web_ws_url: str = os.getenv("WEB_WS_URL", "ws://127.0.0.1:8000/ws/gateway")

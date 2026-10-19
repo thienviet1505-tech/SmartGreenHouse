@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from uuid import uuid4
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse
 from sqlalchemy import delete, desc, select
 
@@ -16,7 +16,7 @@ from .gateway_ws import gateway_manager
 from .models import ActuatorState, CommandLog, ControlRule, GatewayStatus, SensorReading
 from .security import dashboard_token_ok, gateway_token_ok
 from .services.simulator import GreenhouseSimulator
-from .services.state import build_state
+from .services.state import build_state, remember_live
 from .websocket import manager
 
 logger = logging.getLogger("uvicorn.error")
@@ -58,12 +58,18 @@ async def handle_gateway_message(message: dict):
 
     with SessionLocal() as db:
         if message_type == "telemetry":
-            db.add(SensorReading(
-                temperature=float(message["temperature"]),
-                humidity=float(message["humidity"]),
-                light=float(message["light"]),
-                timestamp=datetime.now(timezone.utc),
-            ))
+            # A sensor that failed arrives as null. History needs complete rows, so only
+            # a full reading is stored; relay state and modes are always updated.
+            readings = [None if message.get(key) is None else float(message[key])
+                        for key in ("temperature", "humidity", "light")]
+            remember_live(*readings)
+            if all(value is not None for value in readings):
+                db.add(SensorReading(
+                    temperature=readings[0],
+                    humidity=readings[1],
+                    light=readings[2],
+                    timestamp=datetime.now(timezone.utc),
+                ))
             actuator = db.scalars(select(ActuatorState).order_by(desc(ActuatorState.id))).first()
             if actuator is None:
                 actuator = ActuatorState()
@@ -128,7 +134,11 @@ async def lifespan(app: FastAPI):
         logger.warning("DASHBOARD_TOKEN is empty: the dashboard and relay-control API are OPEN to anyone "
                        "who can reach this server. Set DASHBOARD_TOKEN before exposing it to the internet.")
 
-    tasks = [asyncio.create_task(retention_task())]
+    tasks = []
+    if settings.retention_days > 0:
+        tasks.append(asyncio.create_task(retention_task()))
+    else:
+        logger.warning("RETENTION_DAYS=%s: automatic cleanup of old sensor data is disabled", settings.retention_days)
     if settings.simulator_enabled:
         tasks.append(asyncio.create_task(simulator_task()))
     yield
@@ -227,3 +237,12 @@ async def app_js():
 @app.get("/style.css")
 async def style_css():
     return FileResponse(FRONTEND_DIR / "style.css", media_type="text/css")
+
+
+@app.get("/chart.umd.js")
+async def chart_js():
+    # Optional: put chart.umd.js into frontend/ so the charts work without internet access.
+    path = FRONTEND_DIR / "chart.umd.js"
+    if not path.exists():
+        raise HTTPException(status_code=404)
+    return FileResponse(path, media_type="application/javascript")

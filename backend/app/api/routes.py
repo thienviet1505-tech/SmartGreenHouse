@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import desc, select
+from sqlalchemy import desc, func, select
 from sqlalchemy.orm import Session
 
 from ..config import settings
@@ -46,12 +46,15 @@ def get_history(minutes: int = 60, max_points: int = 720, db: Session = Depends(
     minutes = max(1, min(minutes, 10080))
     max_points = max(10, min(max_points, 2000))
     since = datetime.now(timezone.utc) - timedelta(minutes=minutes)
-    rows = db.scalars(
-        select(SensorReading).where(SensorReading.timestamp >= since).order_by(SensorReading.timestamp)
-    ).all()
-    if len(rows) > max_points:  # keep the response small for long ranges
-        step = len(rows) / max_points
-        rows = [rows[int(i * step)] for i in range(max_points)]
+    in_range = SensorReading.timestamp >= since
+    total = db.scalar(select(func.count()).select_from(SensorReading).where(in_range)) or 0
+    query = select(SensorReading).where(in_range)
+    if total > max_points:
+        # Sample inside SQL (every step-th row): loading all rows of a 7-day range as ORM
+        # objects took seconds per request and the dashboard asks again every 10 s.
+        step = -(-total // max_points)
+        query = query.where(SensorReading.id % step == 0)
+    rows = db.scalars(query.order_by(SensorReading.timestamp)).all()
     return [
         {"timestamp": iso_utc(row.timestamp), "temperature": row.temperature,
          "humidity": row.humidity, "light": row.light}

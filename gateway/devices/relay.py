@@ -18,10 +18,9 @@ class Relay2CH:
         for channel in (0, 1):
             self.set_channel(channel, False)
 
-    @property
-    def fan_state(self):
-        return self.states[0]
-
-    @property
-    def led_state(self):
-        return self.states[1]
+    def restore(self):
+        """Re-send the software states to the hardware. Used as a connectivity
+        probe after a failure, and it makes the relay match the software again
+        if the relay board lost power in the meantime."""
+        for channel in (0, 1):
+            self.set_channel(channel, self.states[channel])

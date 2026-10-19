@@ -26,6 +26,10 @@ function renderState(state) {
 
 const TOKEN_KEY = "greenhouse_access_token";
 
+let tokenPrompt = null;   // one prompt at a time, shared by every request that gets a 401
+let authBlocked = false;  // token missing/rejected and the user cancelled: pause polling until they act again
+let wsStopped = false;    // the realtime socket gave up because it had no valid token
+
 function getToken() {
     return localStorage.getItem(TOKEN_KEY) || "";
 }
@@ -38,22 +42,45 @@ function askToken(message) {
     return value;
 }
 
+function ensureToken(message = "Enter the dashboard access token:") {
+    if (!tokenPrompt) {
+        tokenPrompt = Promise.resolve()
+            .then(() => {
+                const value = askToken(message);
+                authBlocked = !value;
+                if (value && wsStopped) {
+                    wsStopped = false;
+                    connectWebSocket();
+                }
+                return value;
+            })
+            .finally(() => {
+                tokenPrompt = null;
+            });
+    }
+    return tokenPrompt;
+}
+
 async function fetchJson(url, options = {}, retry = true) {
-    const token = getToken();
+    const sentToken = getToken();
     const response = await fetch(url, {
         ...options,
         headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            ...(sentToken ? { Authorization: `Bearer ${sentToken}` } : {}),
             ...(options.headers || {}),
         },
     });
 
     if (response.status === 401 && retry) {
-        localStorage.removeItem(TOKEN_KEY);
-        if (askToken("Enter the dashboard access token:")) {
+        if (getToken() === sentToken) {
+            localStorage.removeItem(TOKEN_KEY);  // the token we sent was just rejected
+        }
+        const token = getToken() || (await ensureToken());
+        if (token && token !== sentToken) {
             return fetchJson(url, options, false);
         }
+        authBlocked = true;
     }
 
     if (!response.ok) {
@@ -90,6 +117,14 @@ function sampleRows(rows, maxPoints = 360) {
     }
 
     return sampled;
+}
+
+async function waitForChart(timeoutMs = 5000) {
+    const start = Date.now();
+    while (typeof Chart === "undefined" && Date.now() - start < timeoutMs) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    return typeof Chart !== "undefined";
 }
 
 function initHistoryChart() {
@@ -170,8 +205,12 @@ function initHistoryChart() {
 }
 
 async function loadHistory() {
+    if (!chart) {
+        return;  // Chart.js did not load
+    }
+
     const minutes = Number($("historyRange").value);
-    const rows = await fetchJson(`/api/history?minutes=${minutes}`);
+    const rows = await fetchJson(`/api/history?minutes=${minutes}&max_points=360`);
     const sampled = sampleRows(rows, 360);
 
     chart.data.labels = sampled.map((row) => new Date(row.timestamp).toLocaleTimeString());
@@ -182,6 +221,7 @@ async function loadHistory() {
 }
 
 async function sendControl(device, mode, state = null) {
+    authBlocked = false;
     const response = await fetchJson(`/api/control/${device}`, {
         method: "POST",
         body: JSON.stringify({ mode, state }),
@@ -195,6 +235,7 @@ async function sendControl(device, mode, state = null) {
 }
 
 async function saveRules() {
+    authBlocked = false;
     const payload = {
         fan_on_temp: Number($("fanOnTemp").value),
         fan_off_temp: Number($("fanOffTemp").value),
@@ -220,8 +261,11 @@ function connectWebSocket() {
     const protocol = location.protocol === "https:" ? "wss" : "ws";
     ws = new WebSocket(`${protocol}://${location.host}/ws/live`);
 
+    let sentToken = "";
+
     ws.onopen = () => {
-        ws.send(JSON.stringify({ type: "auth", token: getToken() }));
+        sentToken = getToken();
+        ws.send(JSON.stringify({ type: "auth", token: sentToken }));
     };
 
     ws.onmessage = (event) => {
@@ -245,10 +289,14 @@ function connectWebSocket() {
         }
     };
 
-    ws.onclose = (event) => {
+    ws.onclose = async (event) => {
         if (event.code === 1008) {  // token rejected
-            localStorage.removeItem(TOKEN_KEY);
-            if (!askToken("Access token rejected. Enter the dashboard access token:")) {
+            if (getToken() === sentToken) {
+                localStorage.removeItem(TOKEN_KEY);
+            }
+            const token = getToken() || (await ensureToken("Access token rejected. Enter the dashboard access token:"));
+            if (!token) {
+                wsStopped = true;  // a later successful prompt restarts the socket
                 return;
             }
         }
@@ -279,11 +327,19 @@ document.querySelectorAll(".mode-btn").forEach((button) => {
     });
 });
 
-$("historyRange").addEventListener("change", loadHistory);
+$("historyRange").addEventListener("change", () => {
+    authBlocked = false;
+    loadHistory().catch(console.error);
+});
 $("saveRules").addEventListener("click", saveRules);
 
 (async function init() {
-    initHistoryChart();
+    if (await waitForChart()) {
+        initHistoryChart();
+    } else {
+        $("historyChart").parentElement.textContent =
+            "Chart.js could not be loaded (no internet?). Put chart.umd.js into the frontend folder.";
+    }
 
     try {
         await Promise.all([loadState(), loadRules(), loadHistory()]);
@@ -292,6 +348,14 @@ $("saveRules").addEventListener("click", saveRules);
     }
 
     connectWebSocket();
-    setInterval(loadHistory, 10000);
-    setInterval(() => loadState().catch(() => {}), 5000);
+    setInterval(() => {
+        if (!authBlocked) {
+            loadHistory().catch(console.error);
+        }
+    }, 10000);
+    setInterval(() => {
+        if (!authBlocked) {
+            loadState().catch(() => {});
+        }
+    }, 5000);
 })();
