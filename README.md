@@ -1,5 +1,12 @@
 # Smart Greenhouse
 
+chạy lệnh đối với máy chủ: 
+//chạy các lệnh trên terminal
+Kiểm tra cloudflared đã có trên VS code chưa: cloudflared --version 
+// Nếu không hiện phiên bản cài bằng lệnh sau: winget install --id Cloudflare.cloudflared
+sau khi có cloudflared chạy lệnh mở web giao diện
+mở một terminal khác chạy lệnh sau để tạo link truy cập web từ các máy khác: cloudflared tunnel --url http://localhost:8000
+
 Web dashboard (FastAPI) + Windows hardware gateway (USB-RS485 / Modbus RTU) for a small greenhouse:
 1 light sensor (DFRobot SEN0644), 1 temperature/humidity sensor (TH10S-B-PE, SHT30) and a 2-channel relay
 (fan + LED). The web side contains no serial code; only `gateway/` talks to RS485.
