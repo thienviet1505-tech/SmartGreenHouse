@@ -1,136 +1,153 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Greenhouse</title>
-    <link rel="stylesheet" href="/style.css">
-    <!-- Prefer frontend/chart.umd.js (works without internet); otherwise fall back to the CDN, pinned to one version. -->
-    <script src="/chart.umd.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.js';document.head.appendChild(s);"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SmartGreenHouse</title>
+<link rel="stylesheet" href="/style.css">
 </head>
 <body>
-<div class="container">
-    <header class="header">
-        <div>
-            <p class="eyebrow">REMOTE MONITORING & CONTROL</p>
-            <h1>Smart Greenhouse</h1>
-        </div>
-        <div class="status-wrap">
-            <span id="gatewayDot" class="dot offline"></span>
-            <span id="gatewayStatus">Gateway Offline</span>
-        </div>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><span class="logo">🌿</span><b>SmartGreenHouse</b></div>
+    <nav id="nav">
+      <a href="#overview" data-p="overview"><i>🏠</i><span>Tổng quan</span></a>
+      <a href="#control" data-p="control"><i>🎛️</i><span>Điều khiển</span></a>
+      <a href="#monitor" data-p="monitor"><i>📡</i><span>Giám sát</span></a>
+      <a href="#history" data-p="history"><i>📈</i><span>Lịch sử</span></a>
+      <a href="#alerts" data-p="alerts"><i>🔔</i><span>Thông báo</span></a>
+      <a href="#settings" data-p="settings"><i>⚙️</i><span>Cài đặt</span></a>
+    </nav>
+    <div class="sfoot"><p class="sys" id="sysDot"><i></i><span id="sysText">Đang kết nối…</span></p><time id="clock"></time></div>
+  </aside>
+
+  <div class="main">
+    <header class="top">
+      <div><h1 id="pgTitle"></h1><p id="pgSub"></p></div>
+      <button class="bell" id="bell" aria-label="Thông báo">🔔<b id="badge" hidden>0</b></button>
     </header>
+    <p class="banner" id="banner" role="alert" hidden></p>
 
-    <main>
-        <section class="sensor-grid">
-            <article class="card metric">
-                <span class="label">Temperature</span>
-                <strong id="temperature">--</strong>
-                <span>°C</span>
-            </article>
+    <section id="pg-overview">
+      <div class="card hero">
+        <svg viewBox="0 0 520 210" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="520" height="210" fill="var(--sky)"/><rect y="170" width="520" height="40" fill="var(--soil)"/>
+          <path d="M70 170V90L130 50H390L450 90V170Z" fill="var(--glass)" stroke="var(--g)" stroke-width="3"/>
+          <path d="M130 50V170M190 50V170M250 50V170M310 50V170M390 50V170M70 90H450M100 70H420" stroke="var(--g)" stroke-width="1.5" fill="none" opacity=".55"/>
+          <g fill="var(--g)"><circle cx="110" cy="150" r="14"/><circle cx="170" cy="146" r="16"/><circle cx="230" cy="150" r="14"/><circle cx="290" cy="146" r="16"/><circle cx="350" cy="150" r="14"/><circle cx="410" cy="148" r="15"/></g>
+        </svg>
+        <div class="heroTemp"><small>Nhiệt độ trong nhà kính</small><p><b id="hTemp">--</b><em>°C</em></p><span class="chip" id="hChip"></span></div>
+      </div>
+      <div class="g3">
+        <div class="card m" data-k="temperature"><span class="ic">🌡️</span><h3>Nhiệt độ</h3><p class="v"><b id="v-temperature">--</b><em>°C</em></p><span class="chip" id="c-temperature"></span><p class="sub" id="h-temperature"></p><p class="sub" id="a-temperature"></p></div>
+        <div class="card m" data-k="humidity"><span class="ic">💧</span><h3>Độ ẩm không khí</h3><p class="v"><b id="v-humidity">--</b><em>%</em></p><span class="chip" id="c-humidity"></span><p class="sub" id="h-humidity"></p><p class="sub" id="a-humidity">Chưa có thiết bị điều khiển độ ẩm.</p></div>
+        <div class="card m" data-k="light"><span class="ic">☀️</span><h3>Ánh sáng</h3><p class="v"><b id="v-light">--</b><em>lux</em></p><span class="chip" id="c-light"></span><p class="sub" id="h-light"></p><p class="sub" id="a-light"></p></div>
+      </div>
+      <div class="g2">
+        <div class="card row"><span class="ic">🌀</span><div><h3>Quạt</h3><p class="sub" id="od-fan"></p></div></div>
+        <div class="card row"><span class="ic">💡</span><div><h3>Đèn LED</h3><p class="sub" id="od-led"></p></div></div>
+      </div>
+      <p class="okbar" id="okbar"></p>
+    </section>
 
-            <article class="card metric">
-                <span class="label">Humidity</span>
-                <strong id="humidity">--</strong>
-                <span>%RH</span>
-            </article>
+    <section id="pg-control" hidden>
+      <div class="card dev" id="dev-fan">
+        <div class="row"><span class="ic">🌀</span><div class="grow"><h3>Quạt thông gió</h3><p class="st" id="ds-fan">Đang tắt</p></div>
+          <label class="sw" title="Chỉ dùng được ở chế độ Thủ công"><input type="checkbox" id="sw-fan" disabled><i></i></label></div>
+        <div class="seg mode"><button data-dev="fan" data-mode="AUTO">Tự động</button><button data-dev="fan" data-mode="MANUAL">Thủ công</button></div>
+        <p class="sub" id="dn-fan"></p>
+      </div>
+      <div class="card dev" id="dev-led">
+        <div class="row"><span class="ic">💡</span><div class="grow"><h3>Đèn chiếu sáng LED</h3><p class="st" id="ds-led">Đang tắt</p></div>
+          <label class="sw" title="Chỉ dùng được ở chế độ Thủ công"><input type="checkbox" id="sw-led" disabled><i></i></label></div>
+        <div class="seg mode"><button data-dev="led" data-mode="AUTO">Tự động</button><button data-dev="led" data-mode="MANUAL">Thủ công</button></div>
+        <p class="sub" id="dn-led"></p>
+      </div>
+      <p class="note">Công tắc chỉ bật được khi chọn Thủ công. Ở chế độ Tự động, hệ thống tự đọc cảm biến và bật/tắt theo ngưỡng trong mục Cài đặt.</p>
+    </section>
 
-            <article class="card metric">
-                <span class="label">Light</span>
-                <strong id="light">--</strong>
-                <span>Lux</span>
-            </article>
+    <section id="pg-monitor" hidden>
+      <div class="g3">
+        <div class="card row"><span class="ic">🔌</span><div><h3>Gateway</h3><p class="st" id="m-gw"></p></div></div>
+        <div class="card row"><span class="ic">🔗</span><div><h3>Đường truyền RS485</h3><p class="st" id="m-bus"></p></div></div>
+        <div class="card row"><span class="ic">⏱️</span><div><h3>Dữ liệu mới nhất</h3><p class="st" id="m-age"></p></div></div>
+      </div>
+      <div class="g2">
+        <div class="card"><h2>Thông số theo thời gian thực</h2><ul class="list" id="liveList"></ul></div>
+        <div class="card"><h2>Thiết bị trong hệ thống</h2><ul class="list" id="devList"></ul></div>
+      </div>
+      <div class="card"><h2>Xu hướng 30 phút gần đây</h2>
+        <div class="g3">
+          <figure><figcaption>Nhiệt độ <span id="sp-temperature"></span></figcaption><canvas class="spark" id="spark-temperature"></canvas></figure>
+          <figure><figcaption>Độ ẩm <span id="sp-humidity"></span></figcaption><canvas class="spark" id="spark-humidity"></canvas></figure>
+          <figure><figcaption>Ánh sáng <span id="sp-light"></span></figcaption><canvas class="spark" id="spark-light"></canvas></figure>
+        </div>
+      </div>
+    </section>
 
-            <article class="card metric">
-                <span class="label">RS485</span>
-                <strong id="rs485Status">--</strong>
-                <span>Link</span>
-            </article>
-        </section>
+    <section id="pg-history" hidden>
+      <div class="card">
+        <div class="bar">
+          <div class="datepick"><button id="dPrev" aria-label="Ngày trước">‹</button><input type="date" id="dDate"><button id="dNext" aria-label="Ngày sau">›</button><button id="dToday">Hôm nay</button></div>
+          <div class="seg" id="hTabs"><button data-k="temperature" class="active">Nhiệt độ</button><button data-k="humidity">Độ ẩm</button><button data-k="light">Ánh sáng</button></div>
+        </div>
+        <canvas id="hChart" aria-label="Biểu đồ lịch sử theo ngày"></canvas>
+        <p id="readout"></p>
+      </div>
+      <div class="card"><h2 id="tblTitle">Dữ liệu chi tiết</h2><p class="sub">Giá trị trung bình theo từng giờ. Giờ hiện tại được tính dần và cập nhật mỗi phút.</p>
+        <div class="tw"><table><thead><tr><th>Khung giờ</th><th>Nhiệt độ (°C)</th><th>Độ ẩm (%)</th><th>Ánh sáng (lux)</th></tr></thead><tbody id="tbl"></tbody></table></div>
+      </div>
+    </section>
 
-        <section class="control-grid">
-            <article class="card actuator">
-                <div class="card-head">
-                    <div>
-                        <span class="label">Fan</span>
-                        <h2 id="fanState">OFF</h2>
-                    </div>
-                    <span id="fanMode" class="mode">AUTO</span>
-                </div>
-                <div class="button-row">
-                    <button class="mode-btn" data-device="fan" data-mode="AUTO">AUTO</button>
-                    <button class="mode-btn" data-device="fan" data-mode="MANUAL" data-state="true">ON</button>
-                    <button class="mode-btn" data-device="fan" data-mode="MANUAL" data-state="false">OFF</button>
-                </div>
-            </article>
+    <section id="pg-alerts" hidden>
+      <div class="card">
+        <div class="bar"><div class="seg" id="aTabs"><button data-t="all" class="active">Tất cả</button><button data-t="warn">Cảnh báo</button><button data-t="ok">Đã ổn định</button><button data-t="info">Thông tin</button></div>
+          <button class="btn" id="clearEv">Xóa tất cả</button></div>
+        <ul class="alerts" id="alertList"></ul>
+        <p class="sub">Thông báo được ghi trên trình duyệt này khi trang đang mở.</p>
+      </div>
+    </section>
 
-            <article class="card actuator">
-                <div class="card-head">
-                    <div>
-                        <span class="label">LED</span>
-                        <h2 id="ledState">OFF</h2>
-                    </div>
-                    <span id="ledMode" class="mode">AUTO</span>
-                </div>
-                <div class="button-row">
-                    <button class="mode-btn" data-device="led" data-mode="AUTO">AUTO</button>
-                    <button class="mode-btn" data-device="led" data-mode="MANUAL" data-state="true">ON</button>
-                    <button class="mode-btn" data-device="led" data-mode="MANUAL" data-state="false">OFF</button>
-                </div>
-            </article>
-        </section>
-
-        <section class="card chart-card">
-            <div class="card-head">
-                <div>
-                    <span class="label">History</span>
-                    <h2>Environment</h2>
-                </div>
-                <select id="historyRange">
-                    <option value="60">1 hour</option>
-                    <option value="360">6 hours</option>
-                    <option value="1440">24 hours</option>
-                </select>
-            </div>
-            <div class="chart-wrap"><canvas id="historyChart"></canvas></div>
-        </section>
-
-        <section class="card settings">
-            <div class="card-head">
-                <div>
-                    <span class="label">AUTO rules</span>
-                    <h2>Control Settings</h2>
-                </div>
-            </div>
-
-            <div class="form-grid">
-                <label>
-                    Fan ON temperature
-                    <input id="fanOnTemp" type="number" step="0.1">
-                </label>
-
-                <label>
-                    Fan OFF temperature
-                    <input id="fanOffTemp" type="number" step="0.1">
-                </label>
-
-                <label>
-                    LED ON light
-                    <input id="ledOnLux" type="number" step="1">
-                </label>
-
-                <label>
-                    LED OFF light
-                    <input id="ledOffLux" type="number" step="1">
-                </label>
-            </div>
-
-            <button id="saveRules" class="primary-btn">Save Settings</button>
-            <span id="rulesMessage" class="message"></span>
-        </section>
-    </main>
+    <section id="pg-settings" hidden>
+      <div class="g2">
+        <form class="card" id="rulesForm" novalidate><h2>Ngưỡng chạy tự động</h2><p class="sub">Áp dụng cho chế độ Tự động của quạt và đèn.</p>
+          <div class="fields">
+            <label>Bật quạt khi nhiệt độ từ (°C)<input id="fanOnTemp" type="number" step="0.1"></label>
+            <label>Tắt quạt khi nhiệt độ xuống (°C)<input id="fanOffTemp" type="number" step="0.1"></label>
+            <label>Bật đèn khi ánh sáng dưới (lux)<input id="ledOnLux" type="number" step="1"></label>
+            <label>Tắt đèn khi ánh sáng lên (lux)<input id="ledOffLux" type="number" step="1"></label>
+          </div>
+          <div class="actions"><button class="btn primary" id="saveRules" type="submit" disabled>Lưu ngưỡng</button><button class="btn" id="resetRules" type="button" disabled>Hoàn tác</button><span class="msg" id="rulesMsg"></span></div>
+        </form>
+        <form class="card" id="safeForm" novalidate><h2>Vùng an toàn để cảnh báo</h2><p class="sub">Số đo ngoài vùng này sẽ báo "cao" hoặc "thấp".</p>
+          <div class="fields">
+            <label>Nhiệt độ thấp nhất (°C)<input id="sfT0" type="number" step="0.1"></label>
+            <label>Nhiệt độ cao nhất (°C)<input id="sfT1" type="number" step="0.1"></label>
+            <label>Độ ẩm thấp nhất (%)<input id="sfH0" type="number" step="1"></label>
+            <label>Độ ẩm cao nhất (%)<input id="sfH1" type="number" step="1"></label>
+            <label>Ánh sáng thấp nhất (lux)<input id="sfL0" type="number" step="1"></label>
+            <label>Ánh sáng cao nhất (lux)<input id="sfL1" type="number" step="1"></label>
+          </div>
+          <div class="actions"><button class="btn primary" type="submit">Lưu vùng an toàn</button><span class="msg" id="safeMsg"></span></div>
+        </form>
+      </div>
+      <div class="g2">
+        <div class="card"><h2>Giao diện</h2><div class="seg" id="themeSeg"><button data-v="auto">Theo hệ thống</button><button data-v="light">Sáng</button><button data-v="dark">Tối</button></div>
+          <h2 class="gap">Truy cập</h2><p class="sub">Xóa mã truy cập đã lưu trên trình duyệt này.</p><button class="btn" id="logout">Đăng xuất mã truy cập</button></div>
+        <div class="card"><h2>Về hệ thống</h2><ul class="list"><li><span>Cảm biến nhiệt độ, độ ẩm</span><b>SHT30 (RS485)</b></li><li><span>Cảm biến ánh sáng</span><b>SEN0644 (RS485)</b></li><li><span>Relay 2 kênh</span><b>Quạt và đèn LED</b></li><li><span>Cổng giao tiếp</span><b>Gateway Modbus RTU</b></li></ul></div>
+      </div>
+    </section>
+  </div>
 </div>
 
+<div class="toast" id="toast" role="status"></div>
+<dialog id="tokenDlg">
+  <form method="dialog">
+    <p id="tokenMsg"></p>
+    <input id="tokenInput" type="password" autocomplete="current-password" aria-label="Mã truy cập">
+    <div class="actions"><button class="btn primary" value="ok">Vào</button><button class="btn" value="cancel" formnovalidate>Hủy</button></div>
+  </form>
+</dialog>
 <script src="/app.js"></script>
 </body>
 </html>
