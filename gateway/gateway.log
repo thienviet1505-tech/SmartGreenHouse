@@ -51,3 +51,350 @@ Traceback (most recent call last):
     raise SerialException("could not open port {!r}: {!r}".format(self.portstr, ctypes.WinError()))
 serial.serialutil.SerialException: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
 2026-10-19 10:37:40 | INFO | Gateway stopped.
+2026-10-26 10:52:44 | INFO | ==============================================
+2026-10-26 10:52:44 | INFO | SMART GREENHOUSE WINDOWS GATEWAY
+2026-10-26 10:52:44 | INFO | ==============================================
+2026-10-26 10:52:44 | INFO | [TH] function=3 temp_reg=0 hum_reg=1 scale=10
+2026-10-26 10:52:44 | WARNING | [TH] TH_TEMP_REG / TH_HUM_REG are not set in gateway/.env, so the built-in defaults are used. Check them against the sensor manual (tools/probe_modbus.py).
+2026-10-26 10:52:44 | ERROR | Fatal gateway error: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+Traceback (most recent call last):
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\gateway.py", line 312, in run
+    self.bus.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\modbus\client.py", line 60, in open
+    self.serial = serial.Serial(
+                  ^^^^^^^^^^^^^^
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 33, in __init__
+    super(Serial, self).__init__(*args, **kwargs)
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialutil.py", line 244, in __init__
+    self.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 64, in open
+    raise SerialException("could not open port {!r}: {!r}".format(self.portstr, ctypes.WinError()))
+serial.serialutil.SerialException: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+2026-10-26 10:52:44 | INFO | Gateway stopped.
+2026-10-26 10:53:40 | INFO | ==============================================
+2026-10-26 10:53:40 | INFO | SMART GREENHOUSE WINDOWS GATEWAY
+2026-10-26 10:53:40 | INFO | ==============================================
+2026-10-26 10:53:40 | INFO | [TH] function=3 temp_reg=0 hum_reg=1 scale=10
+2026-10-26 10:53:40 | WARNING | [TH] TH_TEMP_REG / TH_HUM_REG are not set in gateway/.env, so the built-in defaults are used. Check them against the sensor manual (tools/probe_modbus.py).
+2026-10-26 10:53:40 | ERROR | Fatal gateway error: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+Traceback (most recent call last):
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\gateway.py", line 312, in run
+    self.bus.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\modbus\client.py", line 60, in open
+    self.serial = serial.Serial(
+                  ^^^^^^^^^^^^^^
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 33, in __init__
+    super(Serial, self).__init__(*args, **kwargs)
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialutil.py", line 244, in __init__
+    self.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 64, in open
+    raise SerialException("could not open port {!r}: {!r}".format(self.portstr, ctypes.WinError()))
+serial.serialutil.SerialException: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+2026-10-26 10:53:40 | INFO | Gateway stopped.
+2026-10-26 10:53:51 | INFO | ==============================================
+2026-10-26 10:53:51 | INFO | SMART GREENHOUSE WINDOWS GATEWAY
+2026-10-26 10:53:51 | INFO | ==============================================
+2026-10-26 10:53:51 | INFO | [TH] function=3 temp_reg=0 hum_reg=1 scale=10
+2026-10-26 10:53:51 | WARNING | [TH] TH_TEMP_REG / TH_HUM_REG are not set in gateway/.env, so the built-in defaults are used. Check them against the sensor manual (tools/probe_modbus.py).
+2026-10-26 10:53:51 | ERROR | Fatal gateway error: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+Traceback (most recent call last):
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\gateway.py", line 312, in run
+    self.bus.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\modbus\client.py", line 60, in open
+    self.serial = serial.Serial(
+                  ^^^^^^^^^^^^^^
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 33, in __init__
+    super(Serial, self).__init__(*args, **kwargs)
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialutil.py", line 244, in __init__
+    self.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 64, in open
+    raise SerialException("could not open port {!r}: {!r}".format(self.portstr, ctypes.WinError()))
+serial.serialutil.SerialException: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+2026-10-26 10:53:51 | INFO | Gateway stopped.
+2026-10-26 11:18:42 | INFO | ==============================================
+2026-10-26 11:18:42 | INFO | SMART GREENHOUSE WINDOWS GATEWAY
+2026-10-26 11:18:42 | INFO | ==============================================
+2026-10-26 11:18:42 | INFO | [TH] function=3 temp_reg=0 hum_reg=1 scale=10
+2026-10-26 11:18:42 | WARNING | [TH] TH_TEMP_REG / TH_HUM_REG are not set in gateway/.env, so the built-in defaults are used. Check them against the sensor manual (tools/probe_modbus.py).
+2026-10-26 11:18:42 | ERROR | Fatal gateway error: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+Traceback (most recent call last):
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\gateway.py", line 312, in run
+    self.bus.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\modbus\client.py", line 60, in open
+    self.serial = serial.Serial(
+                  ^^^^^^^^^^^^^^
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 33, in __init__
+    super(Serial, self).__init__(*args, **kwargs)
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialutil.py", line 244, in __init__
+    self.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 64, in open
+    raise SerialException("could not open port {!r}: {!r}".format(self.portstr, ctypes.WinError()))
+serial.serialutil.SerialException: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+2026-10-26 11:18:42 | INFO | Gateway stopped.
+2026-10-26 11:19:56 | INFO | ==============================================
+2026-10-26 11:19:56 | INFO | SMART GREENHOUSE WINDOWS GATEWAY
+2026-10-26 11:19:56 | INFO | ==============================================
+2026-10-26 11:19:56 | INFO | [TH] function=3 temp_reg=0 hum_reg=1 scale=10
+2026-10-26 11:19:56 | WARNING | [TH] TH_TEMP_REG / TH_HUM_REG are not set in gateway/.env, so the built-in defaults are used. Check them against the sensor manual (tools/probe_modbus.py).
+2026-10-26 11:19:56 | ERROR | Fatal gateway error: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+Traceback (most recent call last):
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\gateway.py", line 312, in run
+    self.bus.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\modbus\client.py", line 60, in open
+    self.serial = serial.Serial(
+                  ^^^^^^^^^^^^^^
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 33, in __init__
+    super(Serial, self).__init__(*args, **kwargs)
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialutil.py", line 244, in __init__
+    self.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 64, in open
+    raise SerialException("could not open port {!r}: {!r}".format(self.portstr, ctypes.WinError()))
+serial.serialutil.SerialException: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+2026-10-26 11:19:56 | INFO | Gateway stopped.
+2026-10-26 11:29:36 | INFO | ==============================================
+2026-10-26 11:29:36 | INFO | SMART GREENHOUSE WINDOWS GATEWAY
+2026-10-26 11:29:36 | INFO | ==============================================
+2026-10-26 11:29:36 | INFO | [TH] function=3 temp_reg=0 hum_reg=1 scale=10
+2026-10-26 11:29:36 | WARNING | [TH] TH_TEMP_REG / TH_HUM_REG are not set in gateway/.env, so the built-in defaults are used. Check them against the sensor manual (tools/probe_modbus.py).
+2026-10-26 11:29:36 | ERROR | Fatal gateway error: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+Traceback (most recent call last):
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\gateway.py", line 312, in run
+    self.bus.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\modbus\client.py", line 60, in open
+    self.serial = serial.Serial(
+                  ^^^^^^^^^^^^^^
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 33, in __init__
+    super(Serial, self).__init__(*args, **kwargs)
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialutil.py", line 244, in __init__
+    self.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 64, in open
+    raise SerialException("could not open port {!r}: {!r}".format(self.portstr, ctypes.WinError()))
+serial.serialutil.SerialException: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+2026-10-26 11:29:36 | INFO | Gateway stopped.
+2026-10-26 11:31:52 | INFO | ==============================================
+2026-10-26 11:31:52 | INFO | SMART GREENHOUSE WINDOWS GATEWAY
+2026-10-26 11:31:52 | INFO | ==============================================
+2026-10-26 11:31:52 | INFO | [TH] function=3 temp_reg=1 hum_reg=0 scale=10
+2026-10-26 11:31:52 | ERROR | Fatal gateway error: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+Traceback (most recent call last):
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\gateway.py", line 312, in run
+    self.bus.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\modbus\client.py", line 60, in open
+    self.serial = serial.Serial(
+                  ^^^^^^^^^^^^^^
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 33, in __init__
+    super(Serial, self).__init__(*args, **kwargs)
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialutil.py", line 244, in __init__
+    self.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 64, in open
+    raise SerialException("could not open port {!r}: {!r}".format(self.portstr, ctypes.WinError()))
+serial.serialutil.SerialException: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+2026-10-26 11:31:52 | INFO | Gateway stopped.
+2026-10-26 11:33:11 | INFO | ==============================================
+2026-10-26 11:33:11 | INFO | SMART GREENHOUSE WINDOWS GATEWAY
+2026-10-26 11:33:11 | INFO | ==============================================
+2026-10-26 11:33:11 | INFO | [TH] function=3 temp_reg=1 hum_reg=0 scale=10
+2026-10-26 11:33:11 | ERROR | Fatal gateway error: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+Traceback (most recent call last):
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\gateway.py", line 312, in run
+    self.bus.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\modbus\client.py", line 60, in open
+    self.serial = serial.Serial(
+                  ^^^^^^^^^^^^^^
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 33, in __init__
+    super(Serial, self).__init__(*args, **kwargs)
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialutil.py", line 244, in __init__
+    self.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 64, in open
+    raise SerialException("could not open port {!r}: {!r}".format(self.portstr, ctypes.WinError()))
+serial.serialutil.SerialException: could not open port 'COM5': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+2026-10-26 11:33:11 | INFO | Gateway stopped.
+2026-10-26 11:34:48 | INFO | ==============================================
+2026-10-26 11:34:48 | INFO | SMART GREENHOUSE WINDOWS GATEWAY
+2026-10-26 11:34:48 | INFO | ==============================================
+2026-10-26 11:34:48 | INFO | [TH] function=3 temp_reg=1 hum_reg=0 scale=10
+2026-10-26 11:34:48 | INFO | [RS485] Port opened successfully
+2026-10-26 11:34:48 | INFO | [RELAY] id=3 initialised: FAN=OFF LED=OFF
+2026-10-26 11:34:48 | INFO | [RS485] COM=COM4 baud=9600 | TH=1 | LIGHT=2 | RELAY=3
+2026-10-26 11:34:48 | INFO | [WEB] Connected to ws://127.0.0.1:8000/ws/gateway
+2026-10-26 11:34:48 | INFO | [WEB] Authentication accepted
+2026-10-26 11:34:48 | INFO | [WEB RULES] FAN 27.0/30.0°C | LED 3000/5000 lux
+2026-10-26 11:34:48 | INFO | [AUTO] LED -> ON | CH2 | reason=light=60.5 lux
+2026-10-26 11:35:14 | INFO | [WEB COMMAND] LED -> ON | CH2 | reason=manual control from website
+2026-10-26 11:35:16 | WARNING | [RS485] LIGHT(id=2): Timeout waiting for slave 2, function 0x03
+2026-10-26 11:35:17 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 11:35:19 | INFO | [WEB COMMAND] LED -> OFF | CH2 | reason=manual control from website
+2026-10-26 11:35:20 | INFO | [WEB COMMAND] LED -> ON | CH2 | reason=manual control from website
+2026-10-26 11:35:22 | INFO | [WEB COMMAND] LED -> AUTO
+2026-10-26 11:35:24 | INFO | [WEB COMMAND] FAN -> OFF | CH1 | reason=manual control from website
+2026-10-26 11:35:25 | WARNING | [RS485] TH(id=1): Timeout waiting for slave 1, function 0x03
+2026-10-26 11:35:28 | INFO | [WEB COMMAND] FAN -> ON | CH1 | reason=manual control from website
+2026-10-26 11:35:28 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 11:35:31 | WARNING | [RS485] TH(id=1): Timeout waiting for slave 1, function 0x03
+2026-10-26 11:35:32 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 11:35:36 | INFO | [WEB COMMAND] FAN -> OFF | CH1 | reason=manual control from website
+2026-10-26 11:35:38 | INFO | [WEB COMMAND] FAN -> ON | CH1 | reason=manual control from website
+2026-10-26 11:35:39 | INFO | [WEB COMMAND] FAN -> OFF | CH1 | reason=manual control from website
+2026-10-26 11:35:51 | WARNING | [RS485] LIGHT(id=2): Timeout waiting for slave 2, function 0x03
+2026-10-26 11:35:56 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 11:36:13 | WARNING | [RS485] TH(id=1): Timeout waiting for slave 1, function 0x03
+2026-10-26 11:36:15 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 11:36:31 | INFO | [WEB COMMAND] FAN -> AUTO
+2026-10-26 11:36:35 | WARNING | [RS485] LIGHT(id=2): Timeout waiting for slave 2, function 0x03
+2026-10-26 11:36:37 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 11:36:39 | WARNING | [RS485] LIGHT(id=2): Timeout waiting for slave 2, function 0x03
+2026-10-26 11:36:40 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 11:37:31 | WARNING | [RS485] TH(id=1): Timeout waiting for slave 1, function 0x03
+2026-10-26 11:37:32 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 11:37:42 | INFO | [WEB COMMAND] LED -> ON | CH2 | reason=manual control from website
+2026-10-26 11:37:44 | INFO | [WEB COMMAND] LED -> OFF | CH2 | reason=manual control from website
+2026-10-26 11:38:31 | INFO | [WEB COMMAND] LED -> ON | CH2 | reason=manual control from website
+2026-10-26 11:38:32 | INFO | [WEB COMMAND] LED -> OFF | CH2 | reason=manual control from website
+2026-10-26 11:38:33 | INFO | [WEB COMMAND] FAN -> OFF | CH1 | reason=manual control from website
+2026-10-26 11:38:36 | INFO | [WEB COMMAND] FAN -> ON | CH1 | reason=manual control from website
+2026-10-26 11:38:42 | INFO | [WEB COMMAND] FAN -> OFF | CH1 | reason=manual control from website
+2026-10-26 11:39:57 | INFO | [WEB COMMAND] FAN -> AUTO
+2026-10-26 11:40:03 | INFO | [WEB COMMAND] LED -> AUTO
+2026-10-26 11:40:04 | INFO | [AUTO] LED -> ON | CH2 | reason=light=88.2 lux
+2026-10-26 11:41:09 | INFO | [WEB RULES] FAN 10.0/23.0°C | LED 3000/5000 lux
+2026-10-26 11:41:09 | INFO | [AUTO] FAN -> ON | CH1 | reason=temperature=28.0°C
+2026-10-26 11:41:18 | WARNING | [RS485] TH(id=1): Timeout waiting for slave 1, function 0x03
+2026-10-26 11:41:20 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 11:41:37 | WARNING | [RS485] TH(id=1): Timeout waiting for slave 1, function 0x03
+2026-10-26 11:42:07 | WARNING | [RS485] TH(id=1): Timeout waiting for slave 1, function 0x03
+2026-10-26 11:42:10 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 11:42:18 | WARNING | [RS485] LIGHT(id=2): Timeout waiting for slave 2, function 0x03
+2026-10-26 11:42:21 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 11:43:14 | WARNING | [RS485] LIGHT(id=2): Timeout waiting for slave 2, function 0x03
+2026-10-26 11:43:21 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 11:43:39 | WARNING | [RS485] LIGHT(id=2): Timeout waiting for slave 2, function 0x03
+2026-10-26 11:43:40 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 11:45:19 | WARNING | [RS485] TH(id=1): Timeout waiting for slave 1, function 0x03
+2026-10-26 11:45:20 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 11:45:26 | WARNING | [RS485] TH(id=1): Timeout waiting for slave 1, function 0x03
+2026-10-26 11:45:29 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 11:53:48 | INFO | [WEB COMMAND] FAN -> ON | CH1 | reason=manual control from website
+2026-10-26 11:53:52 | INFO | [WEB COMMAND] FAN -> OFF | CH1 | reason=manual control from website
+2026-10-26 11:53:58 | INFO | [WEB COMMAND] LED -> ON | CH2 | reason=manual control from website
+2026-10-26 11:54:00 | INFO | [WEB COMMAND] LED -> OFF | CH2 | reason=manual control from website
+2026-10-26 11:54:21 | INFO | [WEB COMMAND] FAN -> AUTO
+2026-10-26 11:54:22 | INFO | [AUTO] FAN -> ON | CH1 | reason=temperature=28.3°C
+2026-10-26 11:54:23 | INFO | [WEB COMMAND] LED -> AUTO
+2026-10-26 11:54:24 | INFO | [AUTO] LED -> ON | CH2 | reason=light=91.7 lux
+2026-10-26 11:56:36 | WARNING | [RS485] TH(id=1): Timeout waiting for slave 1, function 0x03
+2026-10-26 11:56:37 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 11:58:57 | WARNING | [RS485] LIGHT(id=2): Timeout waiting for slave 2, function 0x03
+2026-10-26 11:59:02 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 11:59:16 | WARNING | [RS485] LIGHT(id=2): Timeout waiting for slave 2, function 0x03
+2026-10-26 11:59:17 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 11:59:42 | WARNING | [RS485] LIGHT(id=2): Timeout waiting for slave 2, function 0x03
+2026-10-26 11:59:43 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 12:00:03 | WARNING | [RS485] LIGHT(id=2): Timeout waiting for slave 2, function 0x03
+2026-10-26 12:00:06 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 12:00:12 | WARNING | [RS485] LIGHT(id=2): Timeout waiting for slave 2, function 0x03
+2026-10-26 12:00:13 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 12:02:19 | WARNING | [RS485] LIGHT(id=2): Timeout waiting for slave 2, function 0x03
+2026-10-26 12:02:24 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 12:02:31 | WARNING | [RS485] LIGHT(id=2): Timeout waiting for slave 2, function 0x03
+2026-10-26 12:02:32 | INFO | [RS485] Recovered, all devices answering
+2026-10-26 12:06:35 | WARNING | [RS485] TH(id=1): Timeout waiting for slave 1, function 0x03; LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-10-26 12:06:36 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-10-26 13:02:12 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-10-26 13:19:02 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-10-26 13:19:32 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-10-26 13:20:02 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-10-26 13:20:32 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-10-26 13:21:03 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-10-26 13:21:33 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-10-26 13:22:03 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-10-26 13:22:33 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-10-26 13:23:04 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-10-26 13:23:34 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-10-26 13:24:04 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-10-26 13:24:34 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-10-26 13:25:05 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-10-26 13:25:35 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-10-26 13:25:38 | ERROR | [WEB SOCKET] Connection closed (code 1012)
+2026-10-26 13:25:38 | WARNING | [WEB] Disconnected: code=1012 message=None
+2026-10-26 13:25:43 | ERROR | [WEB SOCKET] [WinError 10061] No connection could be made because the target machine actively refused it
+2026-10-26 13:25:43 | WARNING | [WEB] Disconnected: code=None message=None
+2026-10-26 13:25:45 | INFO | Stopping gateway...
+2026-10-26 13:25:45 | INFO | Gateway stopped.
+2026-11-09 16:49:54 | INFO | ==============================================
+2026-11-09 16:49:54 | INFO | SMART GREENHOUSE WINDOWS GATEWAY
+2026-11-09 16:49:54 | INFO | ==============================================
+2026-11-09 16:49:54 | INFO | [TH] function=3 temp_reg=1 hum_reg=0 scale=10
+2026-11-09 16:49:54 | ERROR | Fatal gateway error: could not open port 'COM4': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+Traceback (most recent call last):
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\gateway.py", line 312, in run
+    self.bus.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\modbus\client.py", line 60, in open
+    self.serial = serial.Serial(
+                  ^^^^^^^^^^^^^^
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 33, in __init__
+    super(Serial, self).__init__(*args, **kwargs)
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialutil.py", line 244, in __init__
+    self.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 64, in open
+    raise SerialException("could not open port {!r}: {!r}".format(self.portstr, ctypes.WinError()))
+serial.serialutil.SerialException: could not open port 'COM4': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+2026-11-09 16:49:54 | INFO | Gateway stopped.
+2026-11-10 18:46:27 | INFO | ==============================================
+2026-11-10 18:46:27 | INFO | SMART GREENHOUSE WINDOWS GATEWAY
+2026-11-10 18:46:27 | INFO | ==============================================
+2026-11-10 18:46:27 | INFO | [TH] function=3 temp_reg=1 hum_reg=0 scale=10
+2026-11-10 18:46:27 | ERROR | Fatal gateway error: could not open port 'COM4': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+Traceback (most recent call last):
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\gateway.py", line 312, in run
+    self.bus.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\gateway\modbus\client.py", line 60, in open
+    self.serial = serial.Serial(
+                  ^^^^^^^^^^^^^^
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 33, in __init__
+    super(Serial, self).__init__(*args, **kwargs)
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialutil.py", line 244, in __init__
+    self.open()
+  File "F:\Visual_Studio_Code\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 64, in open
+    raise SerialException("could not open port {!r}: {!r}".format(self.portstr, ctypes.WinError()))
+serial.serialutil.SerialException: could not open port 'COM4': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+2026-11-10 18:46:27 | INFO | Gateway stopped.
+2026-11-10 18:46:44 | INFO | ==============================================
+2026-11-10 18:46:44 | INFO | SMART GREENHOUSE WINDOWS GATEWAY
+2026-11-10 18:46:44 | INFO | ==============================================
+2026-11-10 18:46:44 | INFO | [TH] function=3 temp_reg=1 hum_reg=0 scale=10
+2026-11-10 18:46:44 | INFO | [RS485] Port opened successfully
+2026-11-10 18:46:47 | WARNING | [RELAY] id=3 not reachable at start-up: Timeout waiting for slave 3, function 0x05
+2026-11-10 18:46:47 | INFO | [RS485] COM=COM4 baud=9600 | TH=1 | LIGHT=2 | RELAY=3
+2026-11-10 18:46:47 | INFO | [WEB] Connected to ws://127.0.0.1:8000/ws/gateway
+2026-11-10 18:46:47 | INFO | [WEB] Authentication accepted
+2026-11-10 18:46:47 | INFO | [WEB RULES] FAN 10.0/23.0°C | LED 3000/5000 lux
+2026-11-10 18:46:49 | WARNING | [RS485] TH(id=1): Timeout waiting for slave 1, function 0x03; LIGHT(id=2): Timeout waiting for slave 2, function 0x03; RELAY(id=3): Timeout waiting for slave 3, function 0x05
+2026-11-10 18:47:14 | WARNING | [RS485] TH(id=1): Timeout waiting for slave 1, function 0x03; LIGHT(id=2): Timeout waiting for slave 2, function 0x03; RELAY(id=3): GetOverlappedResult failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-10 18:47:15 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); RELAY(id=3): GetOverlappedResult failed (PermissionError(13, 'Access is denied.', None,
+2026-11-10 18:47:25 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); RELAY(id=3): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-10 18:47:55 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); RELAY(id=3): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-10 18:47:58 | INFO | Stopping gateway...
+2026-11-10 18:47:59 | WARNING | [WEB] Disconnected: code=1000 message=None
+2026-11-10 18:47:59 | INFO | Gateway stopped.
+2026-11-10 18:48:04 | INFO | ==============================================
+2026-11-10 18:48:04 | INFO | SMART GREENHOUSE WINDOWS GATEWAY
+2026-11-10 18:48:04 | INFO | ==============================================
+2026-11-10 18:48:04 | INFO | [TH] function=3 temp_reg=1 hum_reg=0 scale=10
+2026-11-10 18:48:04 | INFO | [RS485] Port opened successfully
+2026-11-10 18:48:04 | INFO | [RELAY] id=3 initialised: FAN=OFF LED=OFF
+2026-11-10 18:48:04 | INFO | [RS485] COM=COM4 baud=9600 | TH=1 | LIGHT=2 | RELAY=3
+2026-11-10 18:48:04 | INFO | [WEB] Connected to ws://127.0.0.1:8000/ws/gateway
+2026-11-10 18:48:04 | INFO | [WEB] Authentication accepted
+2026-11-10 18:48:04 | INFO | [WEB RULES] FAN 10.0/23.0°C | LED 3000/5000 lux
+2026-11-10 18:48:04 | INFO | [AUTO] LED -> ON | CH2 | reason=light=99.3 lux
+2026-11-10 18:49:44 | INFO | [AUTO] LED -> OFF | CH2 | reason=light=10387.5 lux
+2026-11-10 18:49:50 | INFO | [AUTO] LED -> ON | CH2 | reason=light=1322.2 lux
+2026-11-10 18:50:28 | INFO | [WEB RULES] FAN 10.0/20.0°C | LED 3000/5000 lux
+2026-11-10 18:50:29 | INFO | [AUTO] FAN -> ON | CH1 | reason=temperature=21.5°C
+2026-11-10 18:50:50 | INFO | [WEB RULES] FAN 18.0/20.0°C | LED 3000/5000 lux
+2026-11-10 18:51:44 | WARNING | [RS485] LIGHT(id=2): Timeout waiting for slave 2, function 0x03
+2026-11-10 18:51:46 | INFO | [RS485] Recovered, all devices answering
+2026-11-10 18:52:25 | WARNING | [RS485] LIGHT(id=2): Timeout waiting for slave 2, function 0x03
+2026-11-10 18:52:36 | INFO | Stopping gateway...
+2026-11-10 18:52:36 | WARNING | [WEB] Disconnected: code=None message=None
+2026-11-10 18:52:36 | INFO | Gateway stopped.

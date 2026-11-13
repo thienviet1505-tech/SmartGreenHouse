@@ -36,6 +36,6 @@ echo.
 echo Keep this window open while the web server is running.
 echo.
 
-python -m uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
+"%~dp0.venv\Scripts\python.exe" -m uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
 
 pause

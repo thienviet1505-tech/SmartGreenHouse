@@ -20,7 +20,7 @@ def _float(name: str, default) -> float:
 @dataclass(frozen=True)
 class Settings:
     # --- serial / timing
-    com_port: str = os.getenv("COM_PORT", "COM5")
+    com_port: str = os.getenv("COM_PORT", "COM4")
     baudrate: int = _int("BAUDRATE", 9600)
     timeout: float = _float("MODBUS_TIMEOUT", 0.8)
     poll_interval: float = _float("POLL_INTERVAL", 1.0)
