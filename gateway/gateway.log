@@ -398,3 +398,71 @@ serial.serialutil.SerialException: could not open port 'COM4': FileNotFoundError
 2026-11-10 18:52:36 | INFO | Stopping gateway...
 2026-11-10 18:52:36 | WARNING | [WEB] Disconnected: code=None message=None
 2026-11-10 18:52:36 | INFO | Gateway stopped.
+2026-11-13 12:08:39 | INFO | ==============================================
+2026-11-13 12:08:39 | INFO | SMART GREENHOUSE WINDOWS GATEWAY
+2026-11-13 12:08:39 | INFO | ==============================================
+2026-11-13 12:08:39 | INFO | [TH] function=3 temp_reg=1 hum_reg=0 scale=10
+2026-11-13 12:08:39 | ERROR | Fatal gateway error: could not open port 'COM4': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+Traceback (most recent call last):
+  File "F:\Visual_Studio_Code\SmartGreenHouse\smart-greenhouse-web\gateway\gateway.py", line 312, in run
+    self.bus.open()
+  File "F:\Visual_Studio_Code\SmartGreenHouse\smart-greenhouse-web\gateway\modbus\client.py", line 60, in open
+    self.serial = serial.Serial(
+                  ^^^^^^^^^^^^^^
+  File "F:\Visual_Studio_Code\SmartGreenHouse\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 33, in __init__
+    super(Serial, self).__init__(*args, **kwargs)
+  File "F:\Visual_Studio_Code\SmartGreenHouse\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialutil.py", line 244, in __init__
+    self.open()
+  File "F:\Visual_Studio_Code\SmartGreenHouse\smart-greenhouse-web\.venv\Lib\site-packages\serial\serialwin32.py", line 64, in open
+    raise SerialException("could not open port {!r}: {!r}".format(self.portstr, ctypes.WinError()))
+serial.serialutil.SerialException: could not open port 'COM4': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+2026-11-13 12:08:39 | INFO | Gateway stopped.
+2026-11-13 12:08:50 | INFO | ==============================================
+2026-11-13 12:08:50 | INFO | SMART GREENHOUSE WINDOWS GATEWAY
+2026-11-13 12:08:50 | INFO | ==============================================
+2026-11-13 12:08:50 | INFO | [TH] function=3 temp_reg=1 hum_reg=0 scale=10
+2026-11-13 12:08:50 | INFO | [RS485] Port opened successfully
+2026-11-13 12:08:50 | INFO | [RELAY] id=3 initialised: FAN=OFF LED=OFF
+2026-11-13 12:08:50 | INFO | [RS485] COM=COM4 baud=9600 | TH=1 | LIGHT=2 | RELAY=3
+2026-11-13 12:08:50 | INFO | [WEB] Connected to ws://127.0.0.1:8000/ws/gateway
+2026-11-13 12:08:50 | INFO | [WEB] Authentication accepted
+2026-11-13 12:08:50 | INFO | [WEB RULES] FAN 18.0/20.0°C | LED 3000/5000 lux
+2026-11-13 12:08:50 | INFO | [AUTO] FAN -> ON | CH1 | reason=temperature=23.9°C
+2026-11-13 12:08:50 | INFO | [AUTO] LED -> ON | CH2 | reason=light=364.1 lux
+2026-11-13 12:09:31 | INFO | [WEB COMMAND] FAN -> ON | CH1 | reason=manual control from website
+2026-11-13 12:09:31 | INFO | [WEB COMMAND] FAN -> AUTO
+2026-11-13 12:09:33 | INFO | [WEB COMMAND] LED -> ON | CH2 | reason=manual control from website
+2026-11-13 12:09:33 | INFO | [WEB COMMAND] LED -> AUTO
+2026-11-13 12:10:08 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:10:39 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:11:09 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:11:39 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:12:09 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:12:39 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:13:10 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:13:40 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:14:10 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:24:57 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:41:36 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:47:37 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:48:07 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:48:37 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:49:07 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:49:38 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:50:08 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:50:38 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:51:08 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:51:39 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:52:09 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:52:39 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:53:09 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:53:39 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:54:10 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:54:40 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:55:10 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:55:40 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:56:11 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:56:41 | WARNING | [RS485] TH(id=1): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5)); LIGHT(id=2): WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-11-13 12:57:04 | INFO | Stopping gateway...
+2026-11-13 12:57:04 | WARNING | [WEB] Disconnected: code=1000 message=None
+2026-11-13 12:57:04 | INFO | Gateway stopped.
