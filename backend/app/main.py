@@ -246,3 +246,17 @@ async def chart_js():
     if not path.exists():
         raise HTTPException(status_code=404)
     return FileResponse(path, media_type="application/javascript")
+
+
+@app.get("/sim.css")
+async def sim_css():
+    return FileResponse(FRONTEND_DIR / "sim.css", media_type="text/css")
+
+
+@app.get("/sim/{filename:path}")
+async def sim_files(filename: str):
+    path = FRONTEND_DIR / "sim" / filename
+    if not path.exists() or not path.is_file():
+        raise HTTPException(status_code=404)
+    media = "application/javascript" if filename.endswith(".js") else "text/css"
+    return FileResponse(path, media_type=media)

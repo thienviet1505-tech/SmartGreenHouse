@@ -19,7 +19,7 @@ const SAFE_IDS = { temperature: ["sfT0", "sfT1"], humidity: ["sfH0", "sfH1"], li
 const RULE_IDS = { fan_on_temp: "fanOnTemp", fan_off_temp: "fanOffTemp", led_on_lux: "ledOnLux", led_off_lux: "ledOffLux" };
 const LV = { low: "Thấp", high: "Cao", ok: "Ổn định" };
 const ICON = { warn: "⚠️", ok: "✅", info: "ℹ️" };
-const PAGES = ["overview", "control", "monitor", "history", "alerts", "settings"];
+const PAGES = ["overview", "control", "monitor", "history", "alerts", "settings", "simulation"];
 const INFO = {
   overview: ["Tổng quan", "Nhà kính thông minh. Dữ liệu cảm biến theo thời gian thực"],
   control: ["Điều khiển", "Cài đặt và điều khiển các thiết bị trong nhà kính"],
@@ -27,6 +27,7 @@ const INFO = {
   history: ["Lịch sử dữ liệu", "Biểu đồ và dữ liệu môi trường theo thời gian"],
   alerts: ["Thông báo", "Sự kiện và cảnh báo từ hệ thống"],
   settings: ["Cài đặt", "Ngưỡng tự động, vùng an toàn và giao diện"],
+  simulation: ["Mô phỏng 3D", "Mô phỏng nhà kính với mô hình vật lý. Kết quả mang tính minh họa"],
 };
 
 let ws, state = null, rules = null, events = store("gh_events") || [], alertTab = "all";
@@ -377,6 +378,7 @@ function applyTheme(v) {
 }
 
 /* ---------- điều hướng ---------- */
+let simLoaded = false, simDispose = null;
 function route() {
   const p = PAGES.includes(location.hash.slice(1)) ? location.hash.slice(1) : "overview";
   PAGES.forEach((x) => ($("pg-" + x).hidden = x !== p));
@@ -385,9 +387,18 @@ function route() {
   $("pgSub").textContent = INFO[p][1];
   if (p === "alerts") { store("gh_seen", Date.now()); }
   renderBadge();
+  // Dispose simulation when leaving tab
+  if (p !== "simulation" && simDispose) { simDispose(); simDispose = null; }
   requestAnimationFrame(() => {
     if (p === "history") loadHistory().catch(console.error);
     if (p === "monitor") loadSpark().catch(console.error);
+    if (p === "simulation" && !simDispose) {
+      import("/sim/sim.js").then(mod => {
+        mod.initSimulation();
+        simDispose = mod.disposeSimulation;
+        simLoaded = true;
+      }).catch(e => console.error("[Sim] load failed:", e));
+    }
   });
 }
 
